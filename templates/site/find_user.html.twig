@@ -1,0 +1,47 @@
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.js">  </script>
+
+ <div class="row">
+   <div class="col-12 col-sm-12 col-md-12 col-lg-7">
+        <img src="{{ image }}" class="col-lg-12" id="profile_pic">
+   </div>
+   <div class="col-12 col-sm-12 col-md-12 col-lg-5">
+        <div class="card text-white bg-success mb-3" >
+            <div class="card-header">
+              Professeur de {{subject}} jusqu'au niveau {{level}}
+            </div>
+            <div class="card-body">
+                <h4 class="card-title">{{ firstname }}</h4>
+                <p class="card-text">{{ description }} </p>
+            </div>
+          </div>
+          <div class="card text-white bg-warning mb-3" >
+            <div class="card-header">Contact</div>
+            <div class="card-body">
+              <h4 class="card-title">Email</h4>
+              <p class="card-text">Tu peux me joindre à l'adressse {{ email }}.</p>
+            </div>
+          </div>
+      <div class="card text-white bg-dark mb-3">
+          <div class="card-header"> Mes qualités </div>
+          <div class="card-body">
+            <h4 class="card-title"> Je suis </h4>
+            <p class="card-text"><button type="button" id="show2" class="btn btn-danger  col-12 col-sm-12 col-md-12 col-lg-12"> {{ quality1 }}</button></p>
+             <p class="card-text"> <button type="button" id="show1" class="btn btn-secondary  col-12 col-sm-12 col-md-12 col-lg-12"> {{ quality2 }}</button></p>
+              <p class="card-text"><button type="button" id="show3" class="btn btn-primary col-12 col-sm-12 col-md-12 col-lg-12"> {{quality3 }} </button></p>
+               <p class="card-text"><button type="button" id="show4" class="btn btn-success  col-12 col-sm-12 col-md-12 col-lg-12"> {{ quality4 }} </button></p>
+          </div>
+        </div>
+   </div>
+ </div>
+
+
+
+
+{% endblock %}
+
+

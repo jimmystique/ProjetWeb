@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1> Inscription </h1>
+
+{{ form_start(form)}}
+{{ form_row(form.firstname,{'label': 'Quel est votre prénom ?'})}}
+{{ form_row(form.username,{'label': 'Choisissez votre nom d\'utilisateur'})}}
+{{ form_row(form.email,{'label': 'Entrez votre email'}) }}
+{{ form_row(form.description,{'label': 'Parlez-nous de vous (expérience ...)'}) }}
+{{ form_row(form.password,{'label': 'Choisissez un mot de passe'}) }}
+<button type="submit" class="btn btn-success"> Inscription </button>
+{{ form_end(form)}}
+
+{% endblock%}

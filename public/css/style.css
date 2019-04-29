@@ -1,0 +1,25 @@
+.item-nav{
+  text-align: center;
+  padding-top: 10px;
+}
+
+
+
+
+#container-quality-1, #container-quality-2, #container-quality-3, #container-quality-4{
+  opacity: 0;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -ms-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+#profile_pic{
+ border-radius:100px;
+}
+
+
+#option1, #option2,#option3,#option4,#option5,#option6, #option7, #option8, #option9, #option10{
+  visibility: hidden;
+}

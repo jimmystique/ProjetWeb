@@ -1,0 +1,380 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<script src="https://code.jquery.com/jquery-3.3.1.js">  </script>
+
+<h1> Mon agenda </h1>
+<div>
+   <h2 id="week"></h2>
+</div>
+
+<div>
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" onclick="week_before()" >&laquo;</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" onclick="next_week()" >&raquo;</a>
+    </li>
+  </ul>
+</div>
+
+<section class="row">
+  <div class="col-lg-4">
+     <button type="button" id="show1" class="btn btn-primary col-md-12 col-lg-12 ">Lundi</button>
+     <div class="row">
+       <div class="col-lg-6">
+         <button type="button" id="lu1" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu1')"> 9h - 9h30 </button>
+         <button type="button" id="lu2" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu2')" > 9h30 - 10h </button>
+         <button type="button" id="lu3" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu3')"> 10h - 10h30 </button>
+         <button type="button" id="lu4" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu4')"> 10h30 - 11h </button>
+         <button type="button" id="lu5" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu5')"> 11h - 11h30 </button>
+         <button type="button" id="lu6" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu6')"> 11h30 - 12h </button>
+         <button type="button" id="lu7" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu7')"> 12h - 12h30 </button>
+         <button type="button" id="lu8" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu8')"> 12h30 - 13h </button>
+         <button type="button" id="lu9" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu9')"> 13h - 13h30 </button>
+         <button type="button" id="lu10" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu10')"> 13h30 - 14h </button>
+         <br><br>
+      </div>
+       <div class="col-lg-6">
+         <button type="button" id="lu11" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu11')"> 14h - 14h30 </button>
+         <button type="button" id="lu12" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu12')"> 14h30 - 15h </button>
+         <button type="button" id="lu13" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu13')"> 15h - 15h30 </button>
+         <button type="button" id="lu14" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu14')">15h30 - 16h</button>
+         <button type="button" id="lu15" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu15')">16h - 16h30 </button>
+         <button type="button" id="lu16" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu16')">16h30 - 17h </button>
+         <button type="button" id="lu17" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu17')">17h - 17h30 </button>
+         <button type="button" id="lu18" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu18')">17h30 - 18h </button>
+         <button type="button" id="lu19" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu19')">18h - 18h30 </button>
+         <button type="button" id="lu20" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('lu20')">18h30 - 19h </button>
+         <br><br><br><br>
+
+       </div>
+     </div>
+   </div>
+
+  <div class="col-lg-4">
+     <button type="button" id="show1" class="btn btn-primary col-md-12 col-lg-12 ">Mardi</button>
+     <div class="row">
+       <div class="col-lg-6">
+         <button type="button" id="ma1" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma1')"> 9h - 9h30 </button>
+         <button type="button" id="ma2" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma2')" > 9h30 - 10h </button>
+         <button type="button" id="ma3" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma3')"> 10h - 10h30 </button>
+         <button type="button" id="ma4" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma4')"> 10h30 - 11h </button>
+         <button type="button" id="ma5" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma5')"> 11h - 11h30 </button>
+         <button type="button" id="ma6" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma6')"> 11h30 - 12h </button>
+         <button type="button" id="ma7" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma7')"> 12h - 12h30 </button>
+         <button type="button" id="ma8" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma8')"> 12h30 - 13h </button>
+         <button type="button" id="ma9" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma9')"> 13h - 13h30 </button>
+         <button type="button" id="ma10" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma10')"> 13h30 - 14h </button>
+         <br><br>
+      </div>
+       <div class="col-lg-6">
+         <button type="button" id="ma11" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma11')"> 14h - 14h30 </button>
+         <button type="button" id="ma12" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma12')"> 14h30 - 15h </button>
+         <button type="button" id="ma13" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma13')"> 15h - 15h30 </button>
+         <button type="button" id="ma14" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma14')">15h30 - 16h</button>
+         <button type="button" id="ma15" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma15')">16h - 16h30 </button>
+         <button type="button" id="ma16" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma16')">16h30 - 17h </button>
+         <button type="button" id="ma17" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma17')">17h - 17h30 </button>
+         <button type="button" id="ma18" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma18')">17h30 - 18h </button>
+         <button type="button" id="ma19" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma19')">18h - 18h30 </button>
+         <button type="button" id="ma20" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ma20')">18h30 - 19h </button>
+         <br><br><br><br>
+
+       </div>
+     </div>
+   </div>
+
+
+     <div class="col-lg-4">
+     <button type="button" id="show1" class="btn btn-primary col-md-12 col-lg-12 ">Mercredi</button>
+     <div class="row">
+       <div class="col-lg-6">
+         <button type="button" id="me1" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me1')"> 9h - 9h30 </button>
+         <button type="button" id="me2" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me2')" > 9h30 - 10h </button>
+         <button type="button" id="me3" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me3')"> 10h - 10h30 </button>
+         <button type="button" id="me4" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me4')"> 10h30 - 11h </button>
+         <button type="button" id="me5" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me5')"> 11h - 11h30 </button>
+         <button type="button" id="me6" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me6')"> 11h30 - 12h </button>
+         <button type="button" id="me7" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me7')"> 12h - 12h30 </button>
+         <button type="button" id="me8" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me8')"> 12h30 - 13h </button>
+         <button type="button" id="me9" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me9')"> 13h - 13h30 </button>
+         <button type="button" id="me10" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me10')"> 13h30 - 14h </button>
+         <br><br>
+      </div>
+       <div class="col-lg-6">
+         <button type="button" id="me11" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me11')"> 14h - 14h30 </button>
+         <button type="button" id="me12" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me12')"> 14h30 - 15h </button>
+         <button type="button" id="me13" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me13')"> 15h - 15h30 </button>
+         <button type="button" id="me14" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me14')">15h30 - 16h</button>
+         <button type="button" id="me15" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me15')">16h - 16h30 </button>
+         <button type="button" id="me16" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me16')">16h30 - 17h </button>
+         <button type="button" id="me17" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me17')">17h - 17h30 </button>
+         <button type="button" id="me18" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me18')">17h30 - 18h </button>
+         <button type="button" id="me19" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me19')">18h - 18h30 </button>
+         <button type="button" id="me20" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('me20')">18h30 - 19h </button>
+         <br><br><br><br>
+
+       </div>
+     </div>
+   </div>
+
+
+
+      <div class="col-lg-4">
+     <button type="button" id="show1" class="btn btn-primary col-md-12 col-lg-12 ">Jeudi</button>
+     <div class="row">
+       <div class="col-lg-6">
+         <button type="button" id="je1" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je1')"> 9h - 9h30 </button>
+         <button type="button" id="je2" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je2')" > 9h30 - 10h </button>
+         <button type="button" id="je3" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je3')"> 10h - 10h30 </button>
+         <button type="button" id="je4" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je4')"> 10h30 - 11h </button>
+         <button type="button" id="je5" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je5')"> 11h - 11h30 </button>
+         <button type="button" id="je6" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je6')"> 11h30 - 12h </button>
+         <button type="button" id="je7" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je7')"> 12h - 12h30 </button>
+         <button type="button" id="je8" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je8')"> 12h30 - 13h </button>
+         <button type="button" id="je9" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je9')"> 13h - 13h30 </button>
+         <button type="button" id="je10" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je10')"> 13h30 - 14h </button>
+         <br><br>
+      </div>
+       <div class="col-lg-6">
+         <button type="button" id="je11" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je11')"> 14h - 14h30 </button>
+         <button type="button" id="je12" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je12')"> 14h30 - 15h </button>
+         <button type="button" id="je13" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je13')"> 15h - 15h30 </button>
+         <button type="button" id="je14" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je14')">15h30 - 16h</button>
+         <button type="button" id="je15" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je15')">16h - 16h30 </button>
+         <button type="button" id="je16" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je16')">16h30 - 17h </button>
+         <button type="button" id="je17" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je17')">17h - 17h30 </button>
+         <button type="button" id="je18" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je18')">17h30 - 18h </button>
+         <button type="button" id="je19" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je19')">18h - 18h30 </button>
+         <button type="button" id="je20" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('je20')">18h30 - 19h </button>
+         <br><br><br><br>
+
+       </div>
+     </div>
+   </div>
+
+
+      <div class="col-lg-4">
+     <button type="button" id="show1" class="btn btn-primary col-md-12 col-lg-12 ">Vendredi</button>
+     <div class="row">
+       <div class="col-lg-6">
+         <button type="button" id="ve1" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve1')"> 9h - 9h30 </button>
+         <button type="button" id="ve2" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve2')" > 9h30 - 10h </button>
+         <button type="button" id="ve3" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve3')"> 10h - 10h30 </button>
+         <button type="button" id="ve4" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve4')"> 10h30 - 11h </button>
+         <button type="button" id="ve5" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve5')"> 11h - 11h30 </button>
+         <button type="button" id="ve6" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve6')"> 11h30 - 12h </button>
+         <button type="button" id="ve7" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve7')"> 12h - 12h30 </button>
+         <button type="button" id="ve8" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve8')"> 12h30 - 13h </button>
+         <button type="button" id="ve9" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve9')"> 13h - 13h30 </button>
+         <button type="button" id="ve10" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve10')"> 13h30 - 14h </button>
+         <br><br>
+      </div>
+       <div class="col-lg-6">
+         <button type="button" id="ve11" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve11')"> 14h - 14h30 </button>
+         <button type="button" id="ve12" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve12')"> 14h30 - 15h </button>
+         <button type="button" id="ve13" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve13')"> 15h - 15h30 </button>
+         <button type="button" id="ve14" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve14')">15h30 - 16h</button>
+         <button type="button" id="ve15" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve15')">16h - 16h30 </button>
+         <button type="button" id="ve16" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve16')">16h30 - 17h </button>
+         <button type="button" id="ve17" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve17')">17h - 17h30 </button>
+         <button type="button" id="ve18" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve18')">17h30 - 18h </button>
+         <button type="button" id="ve19" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve19')">18h - 18h30 </button>
+         <button type="button" id="ve20" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('ve20')">18h30 - 19h </button>
+         <br><br><br><br>
+
+       </div>
+     </div>
+   </div>
+
+
+
+
+    <div class="col-lg-4">
+     <button type="button" id="show1" class="btn btn-primary col-md-12 col-lg-12 ">Samedi</button>
+     <div class="row">
+       <div class="col-lg-6">
+         <button type="button" id="sa1" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa1')"> 9h - 9h30 </button>
+         <button type="button" id="sa2" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa2')" > 9h30 - 10h </button>
+         <button type="button" id="sa3" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa3')"> 10h - 10h30 </button>
+         <button type="button" id="sa4" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa4')"> 10h30 - 11h </button>
+         <button type="button" id="sa5" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa5')"> 11h - 11h30 </button>
+         <button type="button" id="sa6" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa6')"> 11h30 - 12h </button>
+         <button type="button" id="sa7" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa7')"> 12h - 12h30 </button>
+         <button type="button" id="sa8" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa8')"> 12h30 - 13h </button>
+         <button type="button" id="sa9" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa9')"> 13h - 13h30 </button>
+         <button type="button" id="sa10" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa10')"> 13h30 - 14h </button>
+         <br><br>
+      </div>
+       <div class="col-lg-6">
+         <button type="button" id="sa11" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa11')"> 14h - 14h30 </button>
+         <button type="button" id="sa12" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa12')"> 14h30 - 15h </button>
+         <button type="button" id="sa13" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa13')"> 15h - 15h30 </button>
+         <button type="button" id="sa14" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa14')">15h30 - 16h</button>
+         <button type="button" id="sa15" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa15')">16h - 16h30 </button>
+         <button type="button" id="sa16" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa16')">16h30 - 17h </button>
+         <button type="button" id="sa17" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa17')">17h - 17h30 </button>
+         <button type="button" id="sa18" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa18')">17h30 - 18h </button>
+         <button type="button" id="sa19" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa19')">18h - 18h30 </button>
+         <button type="button" id="sa20" class="btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12" onclick="changeState('sa20')">18h30 - 19h </button>
+         <br><br><br><br>
+
+       </div>
+     </div>
+   </div>
+
+ </section>
+
+
+ <script>
+
+
+
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    // Calculate full weeks to nearest Thursday
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    return [d.getUTCFullYear(), weekNo];
+}
+
+var result = getWeekNumber(new Date());
+console.log('It\'s currently week ' + result[1] + ' of ' + result[0]);
+ $( '#week' ).text("Semaine n°" + result[1]);
+ $actual_week = result[1];
+
+
+function refreshAgenda(){
+  for($i = 1; $i < 21; $i++){
+    document.getElementById('lu'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('ma'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('me'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('je'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('ve'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('sa'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+  }
+
+}
+
+//RAFRAICHIT L'AGENDA SELON LA SEMAINE
+function updateAvailabilityByWeek($week){
+    $.ajax({
+        url:'/ajax_agenda_availabilities',
+        type: "POST",
+        dataType: "json",
+        data: {
+            "week": $week
+        },
+        async: true,
+        success: function (data)
+        {
+            console.log(data.availabilities)
+            data.availabilities.forEach(function(element){
+                console.log(element);
+                $("#"+element).removeClass("btn-secondary");
+                $("#"+element).addClass("btn-success");
+            })
+
+        },
+        error : function(err){
+          alert(err)
+        }
+     })
+}
+
+
+updateAvailabilityByWeek($actual_week);
+
+
+
+
+function next_week(){
+  console.log("Next week");
+  $val = $( '#week' ).text().replace( /^\D+/g, '');
+  if($val != 53){
+     $val++;
+     $( '#week' ).text("Semaine n°" + $val);
+     refreshAgenda();
+    updateAvailabilityByWeek($val);
+
+  }
+}
+
+function week_before(){
+  console.log("Week before");
+  $val = $( '#week' ).text().replace( /^\D+/g, '');
+  if($val != 0){
+    $val--;
+    $( '#week' ).text("Semaine n°" + $val);
+    refreshAgenda();
+    updateAvailabilityByWeek($val);
+
+  }
+}
+
+
+
+function changeState($val){
+     $week = $( '#week' ).text().replace( /^\D+/g, '');
+     if($week < $actual_week){
+      return ;
+    }
+
+    if(document.getElementById($val).classList.contains('btn-secondary')){
+        //AJOUT D'UNE DATE DE DISPO
+        console.log("AJOUT DANS LA BASE : ");
+        console.log("WEEK : " + $week);
+        console.log("JOUR " + $val);
+        $("#"+$val).removeClass('btn-secondary');
+        $("#"+$val).addClass("btn-success");
+        $.ajax({
+            url:'/ajax_agenda_change',
+            type: "POST",
+            dataType: "json",
+            data: {
+                "week": $week,
+                "val": $val
+            },
+            async: true,
+            success: function (data)
+            {
+                console.log(data)
+            },
+            error : function(err){
+              alert(err)
+            }
+         })
+    }else if(document.getElementById($val).classList.contains('btn-success')){
+        $("#"+$val).removeClass("btn-success");
+        $("#"+$val).addClass("btn-warning");
+
+    }else if(document.getElementById($val).classList.contains('btn-warning')){
+      //ON SUPPRIME
+      $("#"+$val).removeClass("btn-warning");
+      $("#"+$val).addClass("btn-secondary");
+       $.ajax({
+            url:'/ajax_agenda_delete',
+            type: "POST",
+            dataType: "json",
+            data: {
+                "week": $week,
+                "val": $val
+            },
+            async: true,
+            success: function (data)
+            {
+                console.log(data)
+            },
+            error : function(err){
+              alert(err)
+            }
+         })
+
+    }
+}
+
+ </script>
+
+{%endblock%}

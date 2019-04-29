@@ -1,0 +1,218 @@
+{%extends 'base.html.twig'%}
+
+{%block body%}
+<h1> Mon compte </h1>
+<script src="https://code.jquery.com/jquery-3.3.1.js">  </script>
+
+
+ <div class="row">
+   <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+        <img src="{{ app.user.ProfilePic  }}" class="col-lg-12" id="profile_pic">
+   </div>
+   <div class="row col-lg-3">
+     <button type="button" id="show1" class="btn btn-secondary  col-12 col-sm-6 col-md-6 col-lg-12"> {{ app.user.quality1 }}</button>
+     <button type="button" id="show2" class="btn btn-danger  col-12 col-sm-6 col-md-6 col-lg-12"> {{ app.user.quality2 }}</button>
+   </div>
+  <div class="row col-lg-3">
+   <button type="button" id="show3" class="btn btn-primary col-12 col-sm-6 col-md-6 col-lg-12"> {{ app.user.quality3 }} </button>
+   <button type="button" id="show4" class="btn btn-success  col-12 col-sm-6 col-md-6 col-lg-12"> {{ app.user.quality4 }} </button>
+   </div>
+</div>
+
+
+
+
+<div id="container-quality-1" style="display:none;">
+  <br>
+    <label class="required">Votre qualité 1 ?</label>
+    <input type="text"  required="required" id="quality1" class="form-control" />
+    <button type="submit" id="submit1" class="btn-primary btn">Valider</button>
+  <br>
+</div>
+
+
+
+<div id="container-quality-2" style="display:none;">
+  <br>
+    <label class="required">Votre qualité 2 ?</label>
+    <input type="text"  required="required" id="quality2" class="form-control" />
+    <button type="submit"  id="submit2" class="btn-primary btn">Valider</button>
+  <br>
+</div>
+
+
+
+
+<div id="container-quality-3" style="display:none;">
+  <br>
+    <label  class="required">Votre qualité 3 ?</label>
+    <input type="text"  required="required" id="quality3" class="form-control" />
+    <button type="submit" id="submit3" class="btn-primary btn">Valider</button>
+  <br>
+</div>
+
+
+<div id="container-quality-4" style="display:none;">
+  <br>
+    <label class="required">Votre qualité 4 ?</label>
+    <input type="text"  required="required" id="quality4" class="form-control" />
+    <button type="submit" id="submit4" class="btn-primary btn">Valider</button>
+  <br>
+</div>
+
+
+<br><br><hr>
+
+  <p> J'enseigne </p>
+   <div class="btn-group btn-group-toggle row" data-toggle="buttons" style="">
+      <label id="label1" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3 active" onclick="updateSubject('rien')">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked="" > Rien
+      </label>
+
+      <label id="label2" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3 " onclick="updateSubject('maths')">
+        <input type="radio" name="options" id="option2" autocomplete="off"  > Les mathématiques
+      </label>
+
+      <label id="label3" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3" onclick="updateSubject('physique')">
+        <input type="radio" name="options" id="option3" autocomplete="off"> La physique
+      </label>
+
+      <label  id="label4"class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3" onclick="updateSubject('svt')">
+        <input type="radio" name="options" id="option4" autocomplete="off"> La SVT
+      </label>
+
+      <label id="label5" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3" onclick="updateSubject('anglais')">
+        <input type="radio" name="options" id="option5" autocomplete="off"> L'anglais
+      </label>
+
+       <label id="label6" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3" onclick="updateSubject('histoire')">
+        <input type="radio" name="options" id="option6" autocomplete="off"> L'histoire et la géographie
+      </label>
+
+       <label id="label7" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3" onclick="updateSubject('espagnol')">
+        <input type="radio" name="options" id="option7" autocomplete="off"> L'espagnol
+      </label>
+
+      <label id="label8" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-3" onclick="updateSubject('francais')">
+        <input type="radio" name="options" id="option8" autocomplete="off"> Le français
+      </label>
+</div>
+
+
+<br><br>
+  <p> Jusqu'au niveau </p>
+   <div class="row " data-toggle="buttons" style="">
+      <label id="level1" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('6eme')">
+        <input type="radio" name="options" id="option1" autocomplete="off" checked="" > 6eme
+      </label>
+
+      <label id="level2" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2 " onclick="updateLevel('5eme')">
+        <input type="radio" name="options" id="option2" autocomplete="off"  > 5eme
+      </label>
+
+      <label id="level3" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('4eme')">
+        <input type="radio" name="options" id="option3" autocomplete="off"> 4eme
+      </label>
+
+      <label  id="level4"class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('3eme')">
+        <input type="radio" name="options" id="option4" autocomplete="off"> 3eme
+      </label>
+
+      <label id="level5" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('2nde')">
+        <input type="radio" name="options" id="option5" autocomplete="off"> 2nde
+      </label>
+
+       <label id="level6" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('1re')">
+        <input type="radio" name="options" id="option6" autocomplete="off"> 1re
+      </label>
+
+       <label id="level7" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('Terminale')">
+        <input type="radio" name="options" id="option7" autocomplete="off"> Terminale
+      </label>
+
+      <label id="level8" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('L1')">
+        <input type="radio" name="options" id="option8" autocomplete="off"> L1
+      </label>
+
+      <label id="level9" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('L2')">
+        <input type="radio" name="options" id="option9" autocomplete="off"> L2
+      </label>
+
+      <label id="level10" class="btn btn-primary col-6 col-sm-4 col-md-2 col-lg-2" onclick="updateLevel('L3')">
+        <input type="radio" name="options" id="option10" autocomplete="off"> L3
+      </label>
+</div>
+
+<br><br>
+
+
+{{ form_start(userForm)}}
+{{ form_row(userForm.Firstname,{'label': 'Je m\'appelle ?'})}}
+{{ form_row(userForm.Email,{'label': 'Mon email est ?'}) }}
+{{ form_row(userForm.Description,{'label': 'Je me décris comme ?'}) }}
+{{ form_row(userForm.profile_pic,{'label': 'Je ressemble à ?'}) }}
+{{ form_row(userForm.Password,{'label': 'Je valide avec mon mot de passe'}) }}
+{{ form_end(userForm)}}
+{{ message_change_data | raw}}
+
+
+<script>
+
+  switch ("{{app.user.subject}}"){
+    case "maths" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label2').addClass("active"); break;
+    case "physique" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label3').addClass("active"); break;
+    case "svt" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label4').addClass("active"); break;
+    case "anglais" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label5').addClass("active"); break;
+    case "histoire" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label6').addClass("active"); break;
+    case "espagnol" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label7').addClass("active"); break;
+    case "francais" :
+        console.log("maths"); $('#label1').removeClass("active"); $('#label8').addClass("active"); break;
+    default:
+        console.log("rien");
+  }
+
+
+
+
+  switch ("{{app.user.level}}"){
+    case "6eme" :
+        console.log("6eme");  $('#level1').addClass("active"); break;
+    case "5eme" :
+        console.log("5eme"); $('#level2').addClass("active"); break;
+    case "4eme" :
+        console.log("4eme"); $('#level3').addClass("active"); break;
+    case "3eme" :
+        console.log("3eme"); $('#level4').addClass("active"); break;
+    case "2nde" :
+        console.log("2nde"); $('#level5').addClass("active"); break;
+    case "1re" :
+        console.log("1re"); $('#level6').addClass("active"); break;
+    case "Terminale" :
+        console.log("Terminale"); $('#level7').addClass("active"); break;
+    case "L1" :
+        console.log("L1"); $('#level8').addClass("active"); break;
+    case "L2" :
+    console.log("L2"); $('#level9').addClass("active"); break;
+        case "L3" :
+        console.log("L3"); $('#level10').addClass("active"); break;
+    default:
+        console.log("ICICICI" + "{{app.user.level}}");
+  }
+
+
+</script>
+<script src="js/my_account.js"></script>
+
+
+
+
+
+{%endblock%}
+
+
