@@ -8,17 +8,22 @@
  <div class="row">
    <div class="col-12 col-sm-12 col-md-12 col-lg-7">
         <img src="{{ image }}" class="col-lg-12" id="profile_pic">
+        <br><br><br>
+    {%include 'agenda/agenda.html'%}
    </div>
    <div class="col-12 col-sm-12 col-md-12 col-lg-5">
         <div class="card text-white bg-success mb-3" >
             <div class="card-header">
               Professeur de {{subject}} jusqu'au niveau {{level}}
             </div>
+
             <div class="card-body">
                 <h4 class="card-title">{{ firstname }}</h4>
                 <p class="card-text">{{ description }} </p>
             </div>
+
           </div>
+
           <div class="card text-white bg-warning mb-3" >
             <div class="card-header">Contact</div>
             <div class="card-body">
@@ -26,6 +31,7 @@
               <p class="card-text">Tu peux me joindre à l'adressse {{ email }}.</p>
             </div>
           </div>
+
       <div class="card text-white bg-dark mb-3">
           <div class="card-header"> Mes qualités </div>
           <div class="card-body">
@@ -40,6 +46,96 @@
  </div>
 
 
+
+<script>
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    // Calculate full weeks to nearest Thursday
+    var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+    return [d.getUTCFullYear(), weekNo];
+}
+
+  var result = getWeekNumber(new Date());
+console.log('It\'s currently week ' + result[1] + ' of ' + result[0]);
+ $( '#week' ).text("Semaine n°" + result[1]);
+ $actual_week = result[1];
+  //RAFRAICHIT L'AGENDA SELON LA SEMAINE
+function updateAvailabilityByWeek($week){
+    $.ajax({
+        url:'/ajax_agenda_availabilities',
+        type: "POST",
+        dataType: "json",
+        data: {
+            "week": $week,
+            "username": "{{username}}",
+        },
+        async: true,
+        success: function (data)
+        {
+            console.log(data.availabilities)
+            data.availabilities.forEach(function(element){
+                console.log(element);
+                $("#"+element).removeClass("btn-secondary");
+                $("#"+element).addClass("btn-success");
+            })
+
+        },
+        error : function(err){
+          alert(err)
+        }
+     })
+}
+
+updateAvailabilityByWeek($actual_week);
+
+
+
+
+function next_week(){
+  console.log("Next week");
+  $val = $( '#week' ).text().replace( /^\D+/g, '');
+  if($val != 53){
+     $val++;
+     $( '#week' ).text("Semaine n°" + $val);
+     refreshAgenda();
+    updateAvailabilityByWeek($val);
+
+  }
+}
+
+function week_before(){
+  console.log("Week before");
+  $val = $( '#week' ).text().replace( /^\D+/g, '');
+  if($val != 0){
+    $val--;
+    $( '#week' ).text("Semaine n°" + $val);
+    refreshAgenda();
+    updateAvailabilityByWeek($val);
+
+  }
+}
+
+function changeState(){
+  console.log("Demande de changement");
+}
+
+function refreshAgenda(){
+  for($i = 1; $i < 21; $i++){
+    document.getElementById('lu'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('ma'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('me'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('je'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('ve'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+    document.getElementById('sa'+$i).className = "btn btn-secondary  col-12 col-sm-2 col-md-2 col-lg-12";
+  }
+
+}
+
+
+
+</script>
 
 
 {% endblock %}

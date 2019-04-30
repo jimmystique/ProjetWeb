@@ -248,6 +248,7 @@ class SiteController extends AbstractController
         if($user != NULL){
             $firstname = $user->getFirstname();
              return $this->render('site/find_user.html.twig', [
+                'username' => $user->getUsername(),
                 'image' => $user->getProfilePic(),
                 'subject' => $user->getSubject(),
                 'level' => $user->getLevel(),
@@ -347,8 +348,9 @@ class SiteController extends AbstractController
     public function agendaGetAvailabilities(Request $request,ObjectManager $manager): Response{
         $repo = $this->getDoctrine()->getRepository(Availability::class);
         $week = $request->request->get('week');
+        $username = $request->request->get('username');
 
-        $availabilities = $repo->findBy(['Username' => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week]);
+        $availabilities = $repo->findBy(['Username' => $username, 'Week' => $week]);
 
         $ar = array();
         foreach($availabilities as $availability){
