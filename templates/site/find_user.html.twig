@@ -79,7 +79,14 @@ function updateAvailabilityByWeek($week){
                 console.log(element);
                 $("#"+element).removeClass("btn-secondary");
                 $("#"+element).addClass("btn-success");
-            })
+
+            });
+            data.rdvs_as_teacher.forEach(function(element){
+                console.log(element);
+                $("#"+element).removeClass("btn-secondary");
+                $("#"+element).addClass("btn-warning");
+
+            });
 
         },
         error : function(err){
@@ -117,8 +124,46 @@ function week_before(){
   }
 }
 
-function changeState(){
-  console.log("Demande de changement");
+function changeState($begin_rdv){
+  //IF A DECOMMNTE PLUS TARD
+  if("{{app.user.username}}" != "{{username}}"){
+
+      if($("#"+$begin_rdv).hasClass('btn-success')){
+          $week = $( '#week' ).text().replace( /^\D+/g, '');
+           console.log("On peut modifier");
+           $.ajax({
+            url:'/ajax_add_rdv',
+            type: "POST",
+            dataType: "json",
+            data: {
+                "student": "{{app.user.username}}",
+                "teacher": "{{username}}",
+                "week": $week,
+                "begin_rdv": $begin_rdv
+            },
+            async: true,
+            success: function (data)
+            {
+                console.log(data);
+                $( '#message_change' ).text("Nouveau rendez vous pris avec succès");
+                $('#message_change').css('color','green');
+                updateAvailabilityByWeek($week);
+            },
+            error : function(err){
+              alert(err)
+            }
+         })
+      }else{
+         $( '#message_change' ).text("{{username}}" + " n\'est pas disponible à l'heure demandée.");
+          $('#message_change').css('color','red');
+
+
+      }
+
+  }else{
+         $( '#message_change' ).text("Vous ne pouvez pas prendre rendez-vous avec vous-même");
+         $('#message_change').css('color','red');
+   }
 }
 
 function refreshAgenda(){

@@ -25,6 +25,7 @@ use Knp\Component\Pager\Pagination\AbstractPagination;
 use App\Form\UserSearchType;
 use App\Entity\UserSearch;
 use App\Entity\Availability;
+use App\Entity\RDV;
 
 class SiteController extends AbstractController
 {
@@ -332,7 +333,7 @@ class SiteController extends AbstractController
         for($i = 0 ; $i < count($availabilities); $i++){
              $manager->remove($availabilities[$i]);
         }
-         $manager->flush();
+        $manager->flush();
         $response = new Response();
         $response->setContent(json_encode([
            'qual' => 'toto'
@@ -357,9 +358,63 @@ class SiteController extends AbstractController
             array_push($ar,$availability->getBeginHour());
         }
 
+        $repordv = $this->getDoctrine()->getRepository(RDV::class);
+        $rdvs_as_teacher = $repordv->findby(["Teacher" => $username, 'Week' => $week]);
+        $ar_rdv_as_teacher = array();
+        foreach($rdvs_as_teacher as $rdv){
+            array_push($ar_rdv_as_teacher, [$rdv->getBeginHour(),$rdv->getStudent()]);
+        }
+
+
+        $rdvs_as_student = $repordv->findby(["Student" => $username, 'Week' => $week]);
+        $ar_rdv_as_student = array();
+        foreach($rdvs_as_student as $rdv){
+            array_push($ar_rdv_as_student, [$rdv->getBeginHour(),$rdv->getTeacher()]);
+        }
+
 
         $response = new Response();
-        $response->setContent(json_encode(['availabilities' => $ar]));
+        $response->setContent(json_encode(['availabilities' => $ar,
+                                            'rdvs_as_teacher' => $ar_rdv_as_teacher,
+                                            'rdvs_as_student' => $ar_rdv_as_student]));
+         return $response;
+    }
+
+
+     /**
+    * @Route("/ajax_add_rdv", name="add_rdv")
+    */
+    public function addRdv(Request $request,ObjectManager $manager): Response{
+        $student = $request->request->get('student');
+        $teacher = $request->request->get('teacher');
+        $week = $request->request->get('week');
+        $begin_rdv = $request->request->get('begin_rdv');
+        //ON AJOUTE UN RDV A LA TABLE
+        $rdv = new RDV();
+        $rdv->setStudent($student);
+        $rdv->setTeacher($teacher);
+        $rdv->setWeek($week);
+        $rdv->setBeginHour($begin_rdv);
+        $manager->persist($rdv);
+        $manager->flush();
+
+        //ON SUPPRIME LA DISPONIBILITE DU TEACHER
+        $repo = $this->getDoctrine()->getRepository(Availability::class);
+        $availabilities = $repo->findBy(['Username' => $teacher, 'Week' => $week, 'Begin_hour' => $begin_rdv]);
+        for($i = 0 ; $i < count($availabilities); $i++){
+             $manager->remove($availabilities[$i]);
+        }
+        $manager->flush();
+
+
+
+
+        $response = new Response();
+      //  $response->setContent(json_encode(['availabilities' => $ar]));
+         $response->setContent(json_encode([
+                'qual' => 'yoyoyo'
+
+             ]));
          return $response;
     }
 

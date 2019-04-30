@@ -23,7 +23,21 @@ function updateAvailabilityByWeek($week){
                 console.log(element);
                 $("#"+element).removeClass("btn-secondary");
                 $("#"+element).addClass("btn-success");
-            })
+            });
+            data.rdvs_as_teacher.forEach(function(element){
+                console.log(element);
+                $("#"+element).removeClass("btn-secondary");
+                $("#"+element).addClass("btn-warning");
+                $("#"+element).text($("#"+element).text() +  " " + element[1]);
+
+            });
+             data.rdvs_as_student.forEach(function(element){
+                console.log(element);
+                $("#"+element).removeClass("btn-secondary");
+                $("#"+element).addClass("btn-warning");
+                $("#"+element).text($("#"+element).text() + " " + element[1]);
+
+            });
 
         },
         error : function(err){
