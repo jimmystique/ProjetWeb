@@ -84,6 +84,7 @@ function updateAvailabilityByWeek($week){
             data.rdvs_as_teacher.forEach(function(element){
                 console.log(element);
                 $("#"+element).removeClass("btn-secondary");
+                $("#"+element).removeClass("btn-sucess");
                 $("#"+element).addClass("btn-warning");
 
             });
@@ -129,6 +130,7 @@ function changeState($begin_rdv){
   if("{{app.user.username}}" != "{{username}}"){
 
       if($("#"+$begin_rdv).hasClass('btn-success')){
+        $("#"+$begin_rdv).removeClass('btn-success');
           $week = $( '#week' ).text().replace( /^\D+/g, '');
            console.log("On peut modifier");
            $.ajax({
