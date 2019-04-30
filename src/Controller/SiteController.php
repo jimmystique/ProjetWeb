@@ -93,7 +93,7 @@ class SiteController extends AbstractController
                 //CHANGEMENT PHOTO DE PROFILE
                 if($data['profile_pic'] != NULL){
                     $file = $data['profile_pic'];
-                    $filename = 'Uploads/'.md5(uniqid().'.'.$file->guessExtension());
+                    $filename = '/Uploads/'.md5(uniqid().'.'.$file->guessExtension());
                     $file->move($this->getParameter('upload_directory'), $filename);
                     $user->setProfilePic($filename);
                 }
