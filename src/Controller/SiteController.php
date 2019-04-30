@@ -330,13 +330,53 @@ class SiteController extends AbstractController
         $week = $request->request->get('week');
         $dayhour = $request->request->get('val');
         $availabilities = $repo->findBy(['Username' => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week, 'Begin_hour' => $dayhour]);
+        //ON SUPPRIME LES DIPONIBILITES
         for($i = 0 ; $i < count($availabilities); $i++){
              $manager->remove($availabilities[$i]);
         }
+
+        //ON SUPPRIME LES RENDEZ VOUS
+        $repordv = $this->getDoctrine()->getRepository(RDV::class);
+
+
+        $rdvs_as_teacher = $repordv->findby(["Teacher" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour]);
+        $nb_rdvs_as_teacher =  count($rdvs_as_teacher);
+
+         for($i = 0 ; $i < count($rdvs_as_teacher); $i++){
+             $manager->remove($rdvs_as_teacher[$i]);
+        }
+
+        $teacher = '';
+        $rdvs_as_student = $repordv->findby(["Student" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour]);
+        $nb_rdvs_as_student =  count($rdvs_as_student);
+        if($nb_rdvs_as_student == 1){
+            //ON TROUVE L'ENSEIGANNT A QUI ON A ANNULE LE RDV
+            $teacher = $repordv->findOneby(["Student" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour])->getTeacher();
+
+            //ON LUI REMET SA DISPONIBILITE
+            $availability = new Availability();
+            $availability->setUsername($teacher);
+            $availability->setWeek($week);
+            $availability->setBeginHour($dayhour);
+            $manager->persist($availability);
+        }
+
+
+         for($i = 0 ; $i < count($rdvs_as_student); $i++){
+             $manager->remove($rdvs_as_student[$i]);
+        }
+
+
+        //AJOUTER LA NOTIF QUE CA A ETE SUPPRIME
+
+
         $manager->flush();
         $response = new Response();
         $response->setContent(json_encode([
-           'qual' => 'toto'
+           'qual' => 'toto',
+           'teacher length' => $nb_rdvs_as_teacher,
+           'student length' => $nb_rdvs_as_student,
+           'name of teacher' => $teacher
          ]));
          return $response;
     }
