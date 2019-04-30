@@ -139,6 +139,10 @@ class SiteController extends AbstractController
     * @Route("/ajax_change_quality", name="change_quality")
     */
    public function ajaxAction(Request $request,ObjectManager $manager): Response{
+        if(($request->request->get('quality1') == NULL) && ($request->request->get('quality2') == NULL)  && ($request->request->get('quality3') == NULL)  && ($request->request->get('quality4') == NULL) ){
+            return $this->redirectToRoute('site');
+        }
+
         $repo = $this->getDoctrine()->getRepository(User::class);
         $user = $repo->findOneBy(['username' => $this->get('security.token_storage')->getToken()->getUsername()]);
         //AJOUTER LA QUALITE A LA BDD
@@ -207,6 +211,9 @@ class SiteController extends AbstractController
     * @Route("/ajax_subject_change", name="totooo")
     */
    public function changeSubject(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('subject') == NULL){
+            return $this->redirectToRoute('site');
+        }
         //CHANGE LE SUJET D'ENSEIGNEMENT
         $repo = $this->getDoctrine()->getRepository(User::class);
         $user = $repo->findOneBy(['username' => $this->get('security.token_storage')->getToken()->getUsername()]);
@@ -227,6 +234,10 @@ class SiteController extends AbstractController
     * @Route("/ajax_level_change", name="update_level")
     */
    public function updateLevel(Request $request,ObjectManager $manager): Response{
+        if( $request->request->get('level') == NULL){
+            return $this->redirectToRoute('site');
+        }
+
         $repo = $this->getDoctrine()->getRepository(User::class);
         $user = $repo->findOneBy(['username' => $this->get('security.token_storage')->getToken()->getUsername()]);
         $level = $request->request->get('level');
@@ -307,6 +318,10 @@ class SiteController extends AbstractController
     * @Route("/ajax_agenda_change", name="agenda_change")
     */
     public function agendaChange(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('week') == NULL){
+            return $this->redirectToRoute('site');
+        }
+
         $week = $request->request->get('week');
         $dayhour = $request->request->get('val');
         $availability = new Availability();
@@ -327,6 +342,10 @@ class SiteController extends AbstractController
     * @Route("/ajax_agenda_delete", name="agenda_delete")
     */
     public function agendaDelete(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('week') == NULL){
+            return $this->redirectToRoute('site');
+        }
+
         $repo = $this->getDoctrine()->getRepository(Availability::class);
         $week = $request->request->get('week');
         $dayhour = $request->request->get('val');
@@ -412,6 +431,10 @@ class SiteController extends AbstractController
     * @Route("/ajax_agenda_availabilities", name="agenda_availabilities")
     */
     public function agendaGetAvailabilities(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('week') == NULL){
+            return $this->redirectToRoute('site');
+
+        }
         $repo = $this->getDoctrine()->getRepository(Availability::class);
         $week = $request->request->get('week');
         $username = $request->request->get('username');
@@ -698,6 +721,10 @@ class SiteController extends AbstractController
     * @Route("/ajax_add_rdv", name="add_rdv")
     */
     public function addRdv(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('student') == NULL){
+            return $this->redirectToRoute('site');
+
+        }
         //ON AJOUTE UN RDV
         $student = $request->request->get('student');
         $teacher = $request->request->get('teacher');
@@ -732,6 +759,12 @@ class SiteController extends AbstractController
         for($i = 0 ; $i < count($availabilities); $i++){
              $manager->remove($availabilities[$i]);
         }
+
+        //ON SUPPRIME LA DISPONIBILITE DE L'ETUDIANT (S'IL EST EGALEMENT PROF)
+        $availabilitiesStudent = $repo->findBy(['Username' => $student, 'Week' => $week, 'Begin_hour' => $begin_rdv]);
+        for($i = 0 ; $i < count($availabilitiesStudent); $i++){
+             $manager->remove($availabilitiesStudent[$i]);
+        }
         $manager->flush();
 
         $response = new Response();
@@ -759,6 +792,26 @@ class SiteController extends AbstractController
 
         dump($array_notif);
         return $this->render('site/notifications.html.twig',['notifications' => $notifications]);
+    }
+
+
+    /**
+    * @Route("/ajax_notif_delete", name="ajax_notif_delete")
+    */
+    public function  ajaxNotificationDelete(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('notif_id') == NULL){
+            return $this->redirectToRoute('site');
+        }
+        $notif_id = $request->request->get('notif_id');
+        $repo = $this->getDoctrine()->getRepository(Notification::class);
+        $notif = $repo->findOneBy(['id' => $notif_id]);
+        $manager->remove($notif);
+        $manager->flush();
+        $response = new Response();
+        $response->setContent(json_encode([
+           'message' => 'good'
+         ]));
+         return $response;
     }
 
 
