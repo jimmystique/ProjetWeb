@@ -348,12 +348,13 @@ class SiteController extends AbstractController
 
         $teacher = '';
         $rdvs_as_student = $repordv->findby(["Student" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour]);
+
+        //SI L'UTILISATEUR QUI A SUPPRIME LE RDV ETAIT UN ELEVE ON REMET LA DISPONIBILITE A L'ENSEIGNANT
         $nb_rdvs_as_student =  count($rdvs_as_student);
         if($nb_rdvs_as_student == 1){
             //ON TROUVE L'ENSEIGANNT A QUI ON A ANNULE LE RDV
             $teacher = $repordv->findOneby(["Student" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour])->getTeacher();
 
-            //ON LUI REMET SA DISPONIBILITE
             $availability = new Availability();
             $availability->setUsername($teacher);
             $availability->setWeek($week);
