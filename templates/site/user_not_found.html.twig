@@ -2,5 +2,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1> Utilisateur non toruvé </h1>
+<div class="card text-white bg-danger mb-3" >
+  <div class="card-header"></div>
+  <div class="card-body">
+    <h4 class="card-title">Error</h4>
+    <p class="card-text"><strong>Oh zut !</strong> L'utilisateur recherché n'existe pas !</p>
+  </div>
+</div>
 {%endblock%}

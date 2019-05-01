@@ -149,8 +149,10 @@
 {{ form_start(userForm)}}
 {{ form_row(userForm.Firstname,{'label': 'Je m\'appelle ?'})}}
 {{ form_row(userForm.Email,{'label': 'Mon email est ?'}) }}
-{{ form_row(userForm.Description,{'label': 'Je me décris comme ?'}) }}
+{{ form_row(userForm.Description,{'label': 'Je donne quelques informations sur moi et sur mes tarifs ?'}) }}
 {{ form_row(userForm.profile_pic,{'label': 'Je ressemble à ?'}) }}
+{{ form_row(userForm.address,{'label': 'J\'habite au ?'}) }}
+{{ form_row(userForm.phoneNumber,{'label': 'Mon numéro est ?'}) }}
 {{ form_row(userForm.Password,{'label': 'Je valide avec mon mot de passe'}) }}
 {{ form_end(userForm)}}
 {{ message_change_data | raw}}

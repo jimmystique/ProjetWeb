@@ -16,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
+
 
 use App\Form\FirstnameType;
 
@@ -60,13 +62,15 @@ class SiteController extends AbstractController
           $savepass = $userbase->getPassword();
 
 
-          $userData = ['Firstname' => $user->getFirstname(), 'Email' => $user->getEmail(), 'Description' => $user->getDescription()];
+          $userData = ['Firstname' => $user->getFirstname(), 'Email' => $user->getEmail(), 'Description' => $user->getDescription(), 'address' => $user->getAddress(), 'phoneNumber' => $user->getPhoneNumber()];
           $userForm = $this->createFormBuilder($userData)
                              ->add('Firstname', TextType::class, ['label' => 'Votre prénom'])
                              ->add('Email', EmailType::class)
                              ->add('Description', TextareaType::class)
-                             ->add('Password', PasswordType::class, ['label' => 'Validez en entrant votre mot de passe'])
+                             ->add('Password', PasswordType::class, ['required' => true, 'label' => 'Validez en entrant votre mot de passe'])
                              ->add('profile_pic' , FileType::class, ['required' => false, 'attr' => ['accept' => 'image/*']])
+                             ->add('address',TextType::class, ['required' => false])
+                             ->add('phoneNumber',TelType::class, ['required' => false])
                              ->add('Submit', SubmitType::class)
                              ->getForm();
 
@@ -99,6 +103,23 @@ class SiteController extends AbstractController
                     $file->move($this->getParameter('upload_directory'), $filename);
                     $user->setProfilePic($filename);
                 }
+
+                if($data['address'] != NULL){
+                    $address = $data['address'];
+                    $user->setAddress($address);
+                }else{
+                    $user->setAddress(NULL);
+
+                }
+
+                 if($data['phoneNumber'] != NULL){
+                    $phoneNumber = $data['phoneNumber'];
+                    $user->setPhoneNumber($phoneNumber);
+                }else{
+                    $user->setPhoneNumber(NULL);
+
+                }
+
 
                 $manager->persist($user);
                 $manager->flush();
@@ -261,7 +282,20 @@ class SiteController extends AbstractController
         }
         $repo = $this->getDoctrine()->getRepository(User::class);
         $user = $repo->findOneBy(['username' => $username]);
+
         if($user != NULL){
+            $address = NULL;
+
+             if($user->getAddress()!= NULL){
+                $address = $user->getAddress();
+             }
+
+             if($user->getPhoneNumber() != NULL){
+                $phoneNumber = $user->getPhoneNumber();
+             }else{
+                $phoneNumber = NULL;
+             }
+
             $firstname = $user->getFirstname();
              return $this->render('site/find_user.html.twig', [
                 'username' => $user->getUsername(),
@@ -274,7 +308,9 @@ class SiteController extends AbstractController
                  'quality2' => $user->getQuality2(),
                  'quality3' => $user->getQuality3(),
                  'quality4' => $user->getQuality4(),
-                'firstname' => $firstname
+                'firstname' => $firstname,
+                'address' => $address,
+                'phoneNumber' => $phoneNumber
             ]);
         }
         // A REMPLACE PAS USER NOT FOUND

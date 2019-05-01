@@ -14,7 +14,9 @@
    <div class="col-12 col-sm-12 col-md-12 col-lg-5">
         <div class="card text-white bg-success mb-3" >
             <div class="card-header">
-              Professeur de {{subject}} jusqu'au niveau {{level}}
+            {% if subject != 'rien'%}
+               Professeur de {{subject}} jusqu'au niveau {{level}}
+            {%endif%}
             </div>
 
             <div class="card-body">
@@ -28,7 +30,13 @@
             <div class="card-header">Contact</div>
             <div class="card-body">
               <h4 class="card-title">Email</h4>
-              <p class="card-text">Tu peux me joindre à l'adressse {{ email }}.</p>
+              <p class="card-text">Tu peux me joindre à par mail : <strong>{{ email }} </strong></p>
+              {%if phoneNumber%}
+                 <p class="card-text"> et me contacter au numéro : <strong> {{ phoneNumber }}</strong>.</p>
+              {%endif%}
+              {%if address%}
+                 <p class="card-text"> Je donne des cours à l'adresse suivante : <strong> {{ address }}</strong>.</p>
+              {%endif%}
             </div>
           </div>
 

@@ -83,6 +83,16 @@ class User implements UserInterface
      */
     private $level;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $Address;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $PhoneNumber;
+
 
 
     public function getId(): ?int
@@ -239,6 +249,30 @@ class User implements UserInterface
     public function setLevel(?string $level): self
     {
         $this->level = $level;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->Address;
+    }
+
+    public function setAddress(?string $Address): self
+    {
+        $this->Address = $Address;
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->PhoneNumber;
+    }
+
+    public function setPhoneNumber(?string $PhoneNumber): self
+    {
+        $this->PhoneNumber = $PhoneNumber;
 
         return $this;
     }

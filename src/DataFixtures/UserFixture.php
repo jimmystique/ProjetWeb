@@ -47,6 +47,8 @@ class UserFixture extends Fixture
             $user->setQuality4($faker->randomElement($listquality));
             $user->setSubject($faker->randomElement($listSubject));
             $user->setLevel($faker->randomElement($listLevel));
+            $user->setPhoneNumber($faker->phoneNumber());
+            $user->setAddress($faker->address());
             $manager->persist($user);
         }
 
