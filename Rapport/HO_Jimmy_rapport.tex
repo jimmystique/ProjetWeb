@@ -1,0 +1,117 @@
+\documentclass{article}% use option titlepage to get the title on a page of its own.
+\usepackage[utf8]{inputenc}  
+\usepackage[]{algorithm2e}
+\usepackage[T1]{fontenc} 
+\usepackage[francais]{babel}
+\usepackage{float} 
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{appendix}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{blindtext}
+\title{Projet de Programmation Web}
+\date{Mai 2019}
+\author{ Jimmy Ho\\ Double Licence Math\'{e}matiques Informatique   \\Universit\'{e} Paris Diderot
+}
+\begin{document}
+\maketitle
+\newpage
+\section*{Introduction}
+Depuis une vingtaine d’année, le marché de l’enseignement particulier connaît une fulgurante expansion. Ayant moi même pris et donné des cours, j’ai décidé de construire une plate-forme permettant de trouver un enseignant et de prendre rendez-vous de maniere instantanée. J’ai alors le plaisir de vous présenter 20sur20. Nous verrons dans ce rapport, les différentes fonctionnalités intégrées à 20sur20 en les étudiant dans l’ordre dans lequel elles ont été implémentées. \\
+En route vers l’uberisation des cours particuliers !
+\newpage
+\section{L'authentification}
+Bien-sur afin de réserver un cours ou proposer un enseignement, il est indispensable de s’inscrire.
+Pour cela, il faut tout d’abord se rendre sur la page « s’inscrire ». Un formulaire d’inscription s’y trouvera et vous devrez y entrer les informations qui vous concernent. Ce formulaire est soumis à des contraintes de validation. En effet, le nom d’utilisateur et l’email sont uniques: si un utilisateur a déjà pris le nom d’utilisateur ou l’email que vous demandez, un message d’erreur s’affichera. De plus, le mot de passe doit avoir une longueur supérieure à 8 caractères.
+Un utilisateur est caractérisé par : un prénom, un nom d’utilisateur, une description, un email, un mot de passe, quatre qualités, une image,  un niveau d'enseignement, la matière enseignée, une adresse, un numéro de téléphone.
+J'ai choisi qu'un utilisateur peut enseigner une seule matière à la fois: je trouve qu'il est préférable que chaque enseignant enseigne uniquement son domaine de prédilection.
+Pour le formulaire d’inscription , seules certaines informations sont demandées : le prénom, le nom d'utilisateur,  l'email, une description, le mot de passe. Voici un aperçu du formulaire : \\\\\
+\includegraphics[width=1\textwidth]{images/inscription.png}\\
+
+Si toutes les données entrées sont correctes, un nouvel utilisateur sera créé dans la base de données. Le nouvel utilisateur aura son mot de passe hashé avec l’algorithme bcrypt , une photo de profil par défaut lui sera attribué.
+Vous serez alors redirigés vers une page de login où vous aurez la possibilité de vous connecter.\\\\
+\includegraphics[width=1\textwidth]{images/connexion.png}\\\\
+Une fois connectés, vous apercevrez qu'une multitude de catégories apparaît dans la barre de navigation. Les catégories "trouver un prof", "mon agenda", "mon compte", "déconnexion" apparaissent. \\\\
+\includegraphics[width=1\textwidth]{images/navbar.png}
+\\\\
+ Comme leurs noms l'indiquent, lorsque vous cliquez sur "trouver un prof", vous serez redirigez vers une page sur laquelle vous pourrez trouver un enseignant. La catégorie "mon agenda" permet la gestion de son agenda personnel. La catégorie "mon compte" gère les paramètres de l'utilisateur connecté. Enfin la catégorie "déconnexion" permet de se déconnecter. Étudions comment ces catégories ont été implémentées. \\\\
+\section{Mon compte}
+Dans cette section, vous avez la possibilité de modifier vos données. J'ai commencé par implémenté un formulaire gérant le prénom, l'email, la description, la photo de profil, l'adresse et le numéro de téléphone.
+Dans les différents inputs de ce formulaire, vous y verrez les informations que vous aviez entrés. Ces données seront alors modifiables, il suffira de modifier l'input, de rentrer son mot de passe pour valider et de soumettre en appuyant sur "submit". Concernant la photo, j'ai restreint le type de fichier accepté: seules les images sont acceptées. Ainsi il est impossible de soumettre des fichiers pdf, txt ...\\\\
+\includegraphics[width=1\textwidth]{images/donnees.png}
+\newpage
+Sur votre page de gestion du compte, vous verrez également ceci : \\\\
+\includegraphics[width=1\textwidth]{images/enseignement.png}
+Il s'agit de boutons. Si vous être professeur, il vous suffira d'appuyer sur les boutons concernant la matière que vous enseignez et le niveau jusqu'auquel vous pouvez enseigner. Si vous ne souhaitez pas donner de cours, vous devrez appuyer sur "rien" dans la liste des matières. 
+Lorsque vous cliquez sur un bouton, une requête ajax est envoyée, modifiant la base de données, mettant à jour votre niveau d'enseignement et votre matière d'enseignement. \\
+Enfin, j'ai terminé par l'affichage de la photo de profil et des qualités de l'utilisateur : \\\\
+\includegraphics[width=1\textwidth]{images/qualites.png}
+\\\\
+A gauche se trouvera votre photo de profil (ici, la photo est l'image attribuée par défaut). A droit, vous trouverez des carrés sur lesquels vous pouvez appuyer pour enregistrer vos qualités. Lorsque vous appuyez sur l'un de ces carrés, un formulaire apparaît : \\\\
+\includegraphics[width=1\textwidth]{images/qualite.png}
+\\\\\
+Vous y entrerez alors votre qualité et soumettrez le formulaire. Une requête ajax sera envoyée, votre qualité sera alors modifiée. Vous pourrez ré-appuyer sur le bouton pour faire disparaître le formulaire. 
+\newpage
+\section{Trouver un professeur}
+En vous rendant sur la page "trouver un professeur", vous verrez tout d'abord la liste de tous les professeurs du site.  Chaque professeur est représenté par une carte indiquant son prénom, ses quatre qualités et incluant son image de profile. Vous aurez un bouton "cliquez pour voir davantage" qui permettra de vous diriger vers le professeur de la carte.Voilà un exemple de carte  \\\\
+\includegraphics[width=1\textwidth]{images/cartes.png}
+\\\\
+En appuyant sur "cliquer pour voir davantage", vous serez rediriger vers une page indiquant les données du professeur : le niveau d'enseignement, le prénom, la description, les coordonnées, le numéro, l'email, les qualités et l'agenda (que nous verrons dans une autre section) Voilà un aperçu : .\\\\
+\includegraphics[width=1\textwidth]{images/find_user.png} \\\\\newpage
+Revenons sur notre page "trouver un professeur". Vous avez la possibilité de filtrer les professeurs par les critères suivants : le niveau, et la matière enseigné. Par exemple, si vous êtes élève et cherchez un professeur d'espagnol du niveau premières, vous sélectionnerez les champs de la manière suivante : \\\\
+\includegraphics[width=1\textwidth]{images/filtres.png} \\\\
+En appuyant sur valider, la liste des professeurs correspondant à vos critères s'affichera. \\
+Afin de ne pas avoir tous les professeurs sur une même page, j'ai implémenté un système de pagination. Chaque page affichera au maximum cinq professeurs.\\\\
+\includegraphics[width=1\textwidth]{images/pagination.png} 
+\\\\
+\section{Mon agenda}
+\subsection{Découverte de l'agenda}
+Sur cette page, étudiant ou professeur, vous gérerez tous vos rendez-vous du lundi au samedi, de 9h00 à 19h00. J'ai découpé l'emploi du temps en tranches de 30 minutes. En effet, la durée des cours est généralement de 1h00, 1h30, 2h00. Le plus judicieux est donc de découper l'agenda par tranche de 30 minutes. Voici un aperçu de l'agenda : \\\\
+\includegraphics[width=1\textwidth]{images/agenda.png}  \\\\
+Le numéro de semaine indique la semaine actuelle de l'année. La semaine durant laquelle j'ai écris ces mots et pris une capture d'écran de l'agenda est la semaine 18 de l'année. Juste en dessous de "Semaine 18", vous pouvez apercevoir des flèches. Ces flèches permettent de gérer son emploi du temps des semaines suivantes où de se rappeler des rendez-vous qui ont eu lieu précédemment. 
+\subsection{Gestion de l'agenda}
+Tout d'abord, chaque futur professeur, après s'être inscrit, doit préciser ces horaires de disponibilité. Pour cela, il suffit de cliquer sur l'horaire qu'il souhaite. Le bouton passera vert indiquant que l'utilisateur est disponible ce jour là à cette heure là. Par exemple, si l'utilisateur est disponible le lundi de 10h à 13h, puis de 14h à 19h et indisponible le mardi et mercredi (de la semaine 18), son agenda ressemblera à :\\\\
+\includegraphics[width=1\textwidth]{images/agenda_exemple.png} 
+\\\\
+ Il peut également supprimer son rendez-vous, pour cela, il appuiera une première fois sur le bouton qui est vert. Ce bouton passera alors orange indiquant qu'il va supprimer sa disponibilité. Il devra alors confirmer en ré-appuyant sur le bouton, qui redeviendra gris, indiquant que l'utilisateur n'est plus disponible. 
+
+
+Chaque fois que l'utilisateur appuie sur un bouton, une requête Ajax, pour la suppression de la disponibilité ou pour son ajout, est envoyée avec le numéro de la semaine, le jour et l'heure. La base de donnée est alors mise à jour ajoutant ou supprimant une disponibilité. Une table Availability a été créé au préalable ayant comme attributs un nom d'utilisateur, une semaine et un créneau. 
+\subsection{Prise de rendez-vous}
+Si l'utilisateur est élève, après avoir trouvé son âme sœur enseignante (dans la catégorie "trouver son prof"), il pourra réserver un cours avec elle (si l'enseignant concerné est disponible). Pour cela, l'utilisateur doit se rendre sur la page des données du professeur. Sur celle-ci, se trouvera l'agenda du professeur avec ses disponibilités. Pour prendre rendez-vous, l'élève devra juste appuyer sur les créneaux disponibles de l'enseignant (les boutons verts). Si l'élève appuie sur un créneau qui n'est pas disponible, un message d'erreur s'affichera indiquant que l'utilisateur n'est pas disponible au créneau choisi. Sinon, une requête Ajax sera envoyée, insérant dans la base de données un rendez vous: il s'agit d'un couple (étudiant,professeur,numéro de la semaine,créneau). Le bouton passera alors en orange  indiquant que le professeur à un rendez-vous ce jour là. Par exemple, prenons comme professeur, celui qui à l'agenda de la photo précédente et créons un nouvel utilisateur qui porte le nom d'utilisateur Alan01. Supposons qu'il veuille prendre rendez-vous avec le professeur  de 10h à 11h30 le lundi de la semaine 18. Il appuiera donc sur 10h00-10h30, 10h30-11h, 11h, 11h30. L'agenda ressemblera à : \\\\
+
+\includegraphics[width=0.5\textwidth]{images/agenda_user_exemple.png} \\\\\\
+\subsection{Annuler un rendez-vous}
+Pour annuler un rendez-vous, il suffit d'aller dans son agenda, d'appuyer sur la case des rendez-vous qu'on souhaite annuler. 
+Prenons comme exemple, les rendez-vous pris dans l'exemple précédent. 
+Dans l'agenda de l'élève, nous aurons : \\\\
+\includegraphics[width=1\textwidth]{images/agenda_delete.png}
+\\\ \newpage
+J'ai ajouté une fonctionnalité permettant de voir avec qui le rendez-vous a été pris (notamment ici l'utilisateur ayant l'username "jimmystique"). Si l'élève souhaite finalement avoir cours de 10h30 à 11h30, il doit juste supprimer le cours de 10h00 à 10h30 en appuyant dessus. \\
+En appuyant sur le bouton, le boutons repassera au gris : \\\\
+\includegraphics[width=1\textwidth]{images/agenda_delete_2.png}
+\\\\
+Du côté du professeur, lorsqu'un utilisateur supprime un rendez-vous, le créneau qui lui était associé re-passe disponible. Ainsi, l'agenda du professeur ressemblera à : \\\\
+\includegraphics[width=1\textwidth]{images/agenda_teacher.png}
+\\\\
+\section{Notifications}
+Mais comment un élève ou un professeur est avertitde l'annulation ou de la prise de rendez-vous ? Pas d'inquiétudes à ce propos, j'ai implémenté un système de notification. J'ai généré avec Doctrine une entité Notification. Chaque notification correspond à un couple (nom d'utilisateur, message, date, semaine). La catégorie notification s'affiche seulement lorsqu'un utilisateur a des notifications. Dans le cas contraire, j'ai décidé de caché cette section. Sur la photo ci-dessous, l'utilisateur qui est connecté a 9 notifications. \\\\\
+\includegraphics[width=1\textwidth]{images/notification.png}
+\\\\
+Il peut alors les consulter et les supprimer : \\\\
+\includegraphics[width=1\textwidth]{images/notifications_2.png}
+\\\\
+\section{Des données aléatoire}
+Afin de générer de nombreux utilisateur, j'ai utilisé la librairie Faker, disponible à l'adresse "https://github.com/fzaninotto/Faker". Cette libraire m'a permis de générer aléatoirement : des adresses, des emails, des descriptions, des noms d'utilisateurs, des prénoms, des numéros de téléphones. Comme nous l'avons vu précédemment, chaque utilisateur possède au plus quatre qualités. J'ai alors définit un tableau contenant environ 200 qualités. Une fonction de la librairie, permet de tirer aléatoirement un élément d'un tableau. C'est de cette manière que j'ai définit les qualités de chaque utilisateur. Il en est de même pour le niveau et de la matière enseignée.
+\section{Un rendu plus joli}
+Comme demandé, j'ai utilisé la bibliothèque Bootstrap, notamment le thème "Lumen" disponible à  l'adresse "https://bootswatch.com/lumen/" pour un rendu plus joli.
+En ce qui concerne le fonctionnement sur différents supports (smartphone, tablette, PC), j'ai utilisé le système de grille de Bootstrap.
+Voici quelques captures d'écran du projet, prises depuis un téléphone : \\\\\
+\includegraphics[width=0.3\textwidth]{images/phone1.png}
+\includegraphics[width=0.3\textwidth]{images/phone2.png}
+\includegraphics[width=0.3\textwidth]{images/phone3.png}\\\\\\
+\includegraphics[width=0.3\textwidth]{images/phone4.png}
+\includegraphics[width=0.3\textwidth]{images/phone5.png}
+
+\end{document}
