@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+<h1>Notifications</h1>
+<div class="alert alert-dismissible alert-info" id="no_more_notif" style="display:none;">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>Vous avez lu toutes vos notifications !</strong>
+</div>
+
+{%for notif in notifications%}
+  <div class="alert alert-dismissible alert-secondary">
+  <button type="button" class="close" id="{{notif.id}}" onclick="delete_notif( '{{ notif.id }}' )" data-dismiss="alert">&times;</button>
+  <strong style="color:red"><img src="/images/notification.svg" style="max-width: 18px">&nbsp &nbsp</strong> {{notif.message}} {{notif.beginhour}} {{notif.week}}</a>.
+</div>
+{%endfor%}
+
+<script>
+
+  function delete_notif($notif_id){
+    console.log("Delete" + $notif_id);
+    $.ajax({
+            url:'/ajax_notif_delete',
+            type: "POST",
+            dataType: "json",
+            data: {
+                "notif_id": $notif_id
+            },
+            async: true,
+            success: function (data)
+            {
+                console.log(data);
+                if(data.nb_notifs == 0){
+                       $('#no_more_notif').css('display','block');
+                       $('#notif').css('display','none');
+
+                }else{
+                    $( '#notif' ).text(data.nb_notifs + " ");
+                     $('#notif').css('color','red');
+                     document.getElementById('notif').innerHTML += '<img src="/images/notification.svg" style="max-width: 20px">';
+                }
+            },
+            error : function(err){
+              alert(err)
+            }
+         })
+  }
+
+</script>
+
+{%endblock%}
+
+
