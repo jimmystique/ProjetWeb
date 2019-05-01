@@ -131,7 +131,7 @@ class SiteController extends AbstractController
 
 
        }else{
-           return $this->redirectToRoute('security_login');
+            return $this->redirectToRoute('site');
        }
    }
 
@@ -256,6 +256,9 @@ class SiteController extends AbstractController
     * @Route("/user/{username}", name="find_user")
     */
     public function findUser($username){
+        if(!$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')){
+            return $this->redirectToRoute('site');
+        }
         $repo = $this->getDoctrine()->getRepository(User::class);
         $user = $repo->findOneBy(['username' => $username]);
         if($user != NULL){
@@ -284,6 +287,9 @@ class SiteController extends AbstractController
     * @Route("/find_teacher", name="find_teacher")
     */
     public function findTeacher(PaginatorInterface $paginator, Request $request){
+        if(!$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')){
+            return $this->redirectToRoute('site');
+        }
         $search = new UserSearch();
         $form = $this->createForm(UserSearchType::class, $search);
         $form->handleRequest($request);
@@ -309,7 +315,9 @@ class SiteController extends AbstractController
     * @Route("/my_agenda", name="find_teacherr")
     */
     public function myAgenda(){
-
+        if(!$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')){
+            return $this->redirectToRoute('site');
+        }
          return $this->render('agenda/my_agenda.html.twig');
 
     }
@@ -808,10 +816,42 @@ class SiteController extends AbstractController
         $manager->remove($notif);
         $manager->flush();
         $response = new Response();
+
+        $notifs = $repo->findBy(['Username' => $this->get('security.token_storage')->getToken()->getUsername()]);
+        $nb_notifs = count($notifs);
         $response->setContent(json_encode([
-           'message' => 'good'
+           'nb_notifs' => $nb_notifs
          ]));
          return $response;
+    }
+
+
+
+     /**
+    * @Route("/ajax_get_number_of_notifications", name="ajax_get_number")
+    */
+    public function  ajaxGetNumberOfNotifications(Request $request,ObjectManager $manager): Response{
+        if($request->request->get('Username') == NULL){
+            return $this->redirectToRoute('site');
+        }
+        $repo = $this->getDoctrine()->getRepository(Notification::class);
+        $notifications = $repo->findBy(['Username' => $request->request->get('Username')]);
+        $number = count($notifications);
+        $response = new Response();
+        $response->setContent(json_encode([
+           'number' => $number
+         ]));
+         return $response;
+    }
+
+
+    /**
+    * @Route("/{unknown}", name="error_404")
+    */
+    public function  error404($unknown){
+        return $this->render('site/error_404.html.twig', [
+           'controller_name' => 'SiteController',
+       ]);
     }
 
 

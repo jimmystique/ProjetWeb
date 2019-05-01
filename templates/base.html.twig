@@ -50,7 +50,7 @@
         <a class="nav-link" href="/my_account">Mon compte</a>
       </li>
        <li class="nav-item">
-        <a class="nav-link" href="/notifications" id="notif">Notifications</a>
+        <a class="nav-link" href="/notifications" id="notif" style="display:none;"><img src="/images/notification.svg" style="max-width: 25px"></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ path('security_logout') }}">Deconnexion</a>
@@ -66,5 +66,36 @@
 
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
+        <script>
+        {% if  app.user %}
+
+            $.ajax({
+                url:'/ajax_get_number_of_notifications',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "Username": "{{app.user.username}}"
+                },
+                async: true,
+                success: function (data)
+                {
+                    console.log(data);
+                    $( '#notif' ).text(data.number + " ");
+                    if(data.number > 0){
+                         $('#notif').css('color','red');
+                         $('#notif').css('display','block');
+                         document.getElementById('notif').innerHTML += '<img src="/images/notification.svg" style="max-width: 20px">';
+                    }else{
+                         $('#notif').css('display','none');
+                    }
+                },
+                error : function(err){
+                  alert(err)
+                }
+          })
+      {%endif%}
+
+
+        </script>
     </body>
 </html>
