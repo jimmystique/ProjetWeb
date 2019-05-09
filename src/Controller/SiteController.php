@@ -50,6 +50,9 @@ class SiteController extends AbstractController
    }
 
 
+
+
+
     /**
     * @Route("/my_account", name="my_account")
     */
@@ -156,6 +159,11 @@ class SiteController extends AbstractController
        }
    }
 
+
+
+
+
+
    /**
     * @Route("/ajax_change_quality", name="change_quality")
     */
@@ -228,6 +236,10 @@ class SiteController extends AbstractController
 
 
 
+
+
+
+
     /**
     * @Route("/ajax_subject_change", name="totooo")
     */
@@ -251,6 +263,10 @@ class SiteController extends AbstractController
 
 
 
+
+
+
+
     /**
     * @Route("/ajax_level_change", name="update_level")
     */
@@ -271,6 +287,10 @@ class SiteController extends AbstractController
          ]));
          return $response;
     }
+
+
+
+
 
 
     /**
@@ -313,10 +333,14 @@ class SiteController extends AbstractController
                 'phoneNumber' => $phoneNumber
             ]);
         }
-        // A REMPLACE PAS USER NOT FOUND
          return $this->render('site/user_not_found.html.twig');
 
     }
+
+
+
+
+
 
 
     /**
@@ -347,496 +371,11 @@ class SiteController extends AbstractController
     }
 
 
-     /**
-    * @Route("/my_agenda", name="find_teacherr")
-    */
-    public function myAgenda(){
-        if(!$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')){
-            return $this->redirectToRoute('site');
-        }
-         return $this->render('agenda/my_agenda.html.twig');
-
-    }
-
-    /**
-    * @Route("/ajax_agenda_change", name="agenda_change")
-    */
-    public function agendaChange(Request $request,ObjectManager $manager): Response{
-        if($request->request->get('week') == NULL){
-            return $this->redirectToRoute('site');
-        }
-
-        $week = $request->request->get('week');
-        $dayhour = $request->request->get('val');
-        $availability = new Availability();
-        $availability->setUsername($this->get('security.token_storage')->getToken()->getUsername());
-        $availability->setWeek($week);
-        $availability->setBeginHour($dayhour);
-        $manager->persist($availability);
-        $manager->flush();
-        $response = new Response();
-        $response->setContent(json_encode([
-           'qual' => 'toto'
-         ]));
-         return $response;
-    }
-
-
-     /**
-    * @Route("/ajax_agenda_delete", name="agenda_delete")
-    */
-    public function agendaDelete(Request $request,ObjectManager $manager): Response{
-        if($request->request->get('week') == NULL){
-            return $this->redirectToRoute('site');
-        }
-
-        $repo = $this->getDoctrine()->getRepository(Availability::class);
-        $week = $request->request->get('week');
-        $dayhour = $request->request->get('val');
-        $availabilities = $repo->findBy(['Username' => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week, 'Begin_hour' => $dayhour]);
-        //ON SUPPRIME LES DIPONIBILITES
-        for($i = 0 ; $i < count($availabilities); $i++){
-             $manager->remove($availabilities[$i]);
-        }
-
-        //ON SUPPRIME LES RENDEZ VOUS
-        $repordv = $this->getDoctrine()->getRepository(RDV::class);
-
-
-        $rdvs_as_teacher = $repordv->findby(["Teacher" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour]);
-        $nb_rdvs_as_teacher =  count($rdvs_as_teacher);
-        if($nb_rdvs_as_teacher == 1){
-            //ON TROUVE L'ETUDIANT A QUI ON A ANNULE LE RDV
-              $student = $repordv->findOneby(["Teacher" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour])->getStudent();
-               //ON AVERTIT L'ELEVE' QUE LE PROFESSEUR A SUPPRIME LE RDV
-                $notif = new Notification();
-                $notif->setUsername($student);
-                $notif->setMessage($this->get('security.token_storage')->getToken()->getUsername().' a supprimé le rendez-vous à ');
-                $notif->setBeginHour($this->getBeginHourForNotification($dayhour));
-                $notif->setWeek($week);
-                $manager->persist($notif);
-        }
-
-         for($i = 0 ; $i < count($rdvs_as_teacher); $i++){
-             $manager->remove($rdvs_as_teacher[$i]);
-        }
-
-        $teacher = '';
-        $rdvs_as_student = $repordv->findby(["Student" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour]);
-
-
-        //SI L'UTILISATEUR QUI A SUPPRIME LE RDV ETAIT UN ELEVE ON REMET LA DISPONIBILITE A L'ENSEIGNANT
-        $nb_rdvs_as_student =  count($rdvs_as_student);
-        if($nb_rdvs_as_student == 1){
-            //ON TROUVE L'ENSEIGANNT A QUI ON A ANNULE LE RDV
-            $teacher = $repordv->findOneby(["Student" => $this->get('security.token_storage')->getToken()->getUsername(), 'Week' => $week,'Begin_hour' => $dayhour])->getTeacher();
-
-            $availability = new Availability();
-            $availability->setUsername($teacher);
-            $availability->setWeek($week);
-            $availability->setBeginHour($dayhour);
-
-            //ON AVERTIT LE PROFESSEUR QUE L'ELEVE A SUPPRIME LE RDV
-            $notif = new Notification();
-            $notif->setUsername($teacher);
-            $notif->setMessage($this->get('security.token_storage')->getToken()->getUsername().' a supprimé le rendez-vous à ');
-            $notif->setBeginHour($this->getBeginHourForNotification($dayhour));
-            $notif->setWeek($week);
-            $manager->persist($notif);
 
 
 
-            $manager->persist($availability);
-        }
 
 
-         for($i = 0 ; $i < count($rdvs_as_student); $i++){
-             $manager->remove($rdvs_as_student[$i]);
-        }
-
-
-        //AJOUTER LA NOTIF QUE CA A ETE SUPPRIME
-
-
-        $manager->flush();
-        $response = new Response();
-        $response->setContent(json_encode([
-           'qual' => 'toto',
-           'teacher length' => $nb_rdvs_as_teacher,
-           'student length' => $nb_rdvs_as_student,
-           'name of teacher' => $teacher
-         ]));
-         return $response;
-    }
-
-
-
-    /**
-    * @Route("/ajax_agenda_availabilities", name="agenda_availabilities")
-    */
-    public function agendaGetAvailabilities(Request $request,ObjectManager $manager): Response{
-        if($request->request->get('week') == NULL){
-            return $this->redirectToRoute('site');
-
-        }
-        $repo = $this->getDoctrine()->getRepository(Availability::class);
-        $week = $request->request->get('week');
-        $username = $request->request->get('username');
-
-        $availabilities = $repo->findBy(['Username' => $username, 'Week' => $week]);
-
-        $ar = array();
-        foreach($availabilities as $availability){
-            array_push($ar,$availability->getBeginHour());
-        }
-
-        $repordv = $this->getDoctrine()->getRepository(RDV::class);
-        $rdvs_as_teacher = $repordv->findby(["Teacher" => $username, 'Week' => $week]);
-        $ar_rdv_as_teacher = array();
-        foreach($rdvs_as_teacher as $rdv){
-            array_push($ar_rdv_as_teacher, [$rdv->getBeginHour(),$rdv->getStudent()]);
-        }
-
-
-        $rdvs_as_student = $repordv->findby(["Student" => $username, 'Week' => $week]);
-        $ar_rdv_as_student = array();
-        foreach($rdvs_as_student as $rdv){
-            array_push($ar_rdv_as_student, [$rdv->getBeginHour(),$rdv->getTeacher()]);
-        }
-
-
-        $response = new Response();
-        $response->setContent(json_encode(['availabilities' => $ar,
-                                            'rdvs_as_teacher' => $ar_rdv_as_teacher,
-                                            'rdvs_as_student' => $ar_rdv_as_student]));
-         return $response;
-    }
-
-
-
-    public function getBeginHourForNotification($begin_rdv){
-        switch($begin_rdv){
-                case "lu1":
-                    return " 9h00, le lundi de la semaine "; break;
-                case "lu2":
-                    return " 9h30, le lundi de la semaine "; break;
-                case "lu3":
-                    return " 10h00, le lundi de la semaine "; break;
-                case "lu4":
-                    return " 10h30, le lundi de la semaine "; break;
-                case "lu5":
-                     return " 11h00, le lundi de la semaine "; break;
-                case "lu6":
-                     return " 11h30, le lundi de la semaine "; break;
-                case "lu7":
-                     return " 12h00, le lundi de la semaine "; break;
-                case "lu8":
-                     return " 12h30, le lundi de la semaine "; break;
-                case "lu9":
-                    return " 13h00, le lundi de la semaine "; break;
-                case "lu10":
-                     return " 13h30, le lundi de la semaine "; break;
-                case "lu11":
-                     return " 14h00, le lundi de la semaine "; break;
-                case "lu12":
-                    return " 14h30, le lundi de la semaine "; break;
-                case "lu13":
-                     return " 15h00, le lundi de la semaine "; break;
-                case "lu14":
-                     return " 15h30, le lundi de la semaine "; break;
-                 case "lu15":
-                     return " 16h00, le lundi de la semaine "; break;
-                 case "lu16":
-                     return " 16h30, le lundi de la semaine "; break;
-                 case "lu17":
-                     return " 17h00, le lundi de la semaine "; break;
-                 case "lu18":
-                     return " 17h30, le lundi de la semaine "; break;
-                 case "lu19":
-                     return " 18h00, le lundi de la semaine "; break;
-                 case "lu20":
-                     return " 18h30, le lundi de la semaine "; break;
-                case "ma1":
-                    return " 9h00, le mardi de la semaine "; break;
-                case "ma2":
-                    return " 9h30, le mardi de la semaine "; break;
-                case "ma3":
-                    return " 10h00, le mardi de la semaine "; break;
-                case "ma4":
-                    return " 10h30, le mardi de la semaine "; break;
-                case "ma5":
-                     return " 11h00, le mardi de la semaine "; break;
-                case "ma6":
-                     return " 11h30, le mardi de la semaine "; break;
-                case "ma7":
-                     return " 12h00, le mardi de la semaine "; break;
-                case "ma8":
-                     return " 12h30, le mardi de la semaine "; break;
-                case "ma9":
-                    return " 13h00, le mardi de la semaine "; break;
-                case "ma10":
-                     return " 13h30, le mardi de la semaine "; break;
-                case "ma11":
-                     return " 14h00, le mardi de la semaine "; break;
-                case "ma12":
-                    return " 14h30, le mardi de la semaine "; break;
-                case "ma13":
-                     return " 15h00, le mardi de la semaine "; break;
-                case "ma14":
-                     return " 15h30, le mardi de la semaine "; break;
-                 case "ma15":
-                     return " 16h00, le mardi de la semaine "; break;
-                 case "ma16":
-                     return " 16h30, le mardi de la semaine "; break;
-                 case "ma17":
-                     return " 17h00, le mardi de la semaine "; break;
-                 case "ma18":
-                     return " 17h30, le mardi de la semaine "; break;
-                 case "ma19":
-                     return " 18h00, le mardi de la semaine "; break;
-                 case "ma20":
-                     return " 18h30, le mardi de la semaine "; break;
-                case "me1":
-                    return " 9h00, le mercredi de la semaine "; break;
-                case "me2":
-                    return " 9h30, le mercredi de la semaine "; break;
-                case "me3":
-                    return " 10h00, le mercredi de la semaine "; break;
-                case "me4":
-                    return " 10h30, le mercredi de la semaine "; break;
-                case "me5":
-                     return " 11h00, le mercredi de la semaine "; break;
-                case "me6":
-                     return " 11h30, le mercredi de la semaine "; break;
-                case "me7":
-                     return " 12h00, le mercredi de la semaine "; break;
-                case "me8":
-                     return " 12h30, le mercredi de la semaine "; break;
-                case "me9":
-                    return " 13h00, le mercredi de la semaine "; break;
-                case "me10":
-                     return " 13h30, le mercredi de la semaine "; break;
-                case "me11":
-                     return " 14h00, le mercredi de la semaine "; break;
-                case "me12":
-                    return " 14h30, le mercredi de la semaine "; break;
-                case "me13":
-                     return " 15h00, le mercredi de la semaine "; break;
-                case "me14":
-                     return " 15h30, le mercredi de la semaine "; break;
-                 case "me15":
-                     return " 16h00, le mercredi de la semaine "; break;
-                 case "me16":
-                     return " 16h30, le mercredi de la semaine "; break;
-                 case "me17":
-                     return " 17h00, le mercredi de la semaine "; break;
-                 case "me18":
-                     return " 17h30, le mercredi de la semaine "; break;
-                 case "me19":
-                     return " 18h00, le mercredi de la semaine "; break;
-                 case "me20":
-                     return " 18h30, le mercredi de la semaine "; break;
-                 case "je1":
-                    return " 9h00, le jeudi de la semaine "; break;
-                case "je2":
-                    return " 9h30, le jeudi de la semaine "; break;
-                case "je3":
-                    return " 10h00, le jeudi de la semaine "; break;
-                case "je4":
-                    return " 10h30, le jeudi de la semaine "; break;
-                case "je5":
-                     return " 11h00, le jeudi de la semaine "; break;
-                case "je6":
-                     return " 11h30, le jeudi de la semaine "; break;
-                case "je7":
-                     return " 12h00, le jeudi de la semaine "; break;
-                case "je8":
-                     return " 12h30, le jeudi de la semaine "; break;
-                case "je9":
-                    return " 13h00, le jeudi de la semaine "; break;
-                case "je10":
-                     return " 13h30, le jeudi de la semaine "; break;
-                case "je11":
-                     return " 14h00, le jeudi de la semaine "; break;
-                case "je12":
-                    return " 14h30, le jeudi de la semaine "; break;
-                case "je13":
-                     return " 15h00, le jeudi de la semaine "; break;
-                case "je14":
-                     return " 15h30, le jeudi de la semaine "; break;
-                 case "je15":
-                     return " 16h00, le jeudi de la semaine "; break;
-                 case "je16":
-                     return " 16h30, le jeudi de la semaine "; break;
-                 case "je17":
-                     return " 17h00, le jeudi de la semaine "; break;
-                 case "je18":
-                     return " 17h30, le jeudi de la semaine "; break;
-                 case "je19":
-                     return " 18h00, le jeudi de la semaine "; break;
-                 case "je20":
-                     return " 18h30, le jeudi de la semaine "; break;
-                case "ve1":
-                    return " 9h00, le vendredi de la semaine "; break;
-                case "ve2":
-                    return " 9h30, le vendredi de la semaine "; break;
-                case "ve3":
-                    return " 10h00, le vendredi de la semaine "; break;
-                case "ve4":
-                    return " 10h30, le vendredi de la semaine "; break;
-                case "ve5":
-                     return " 11h00, le vendredi de la semaine "; break;
-                case "ve6":
-                     return " 11h30, le vendredi de la semaine "; break;
-                case "ve7":
-                     return " 12h00, le vendredi de la semaine "; break;
-                case "ve8":
-                     return " 12h30, le vendredi de la semaine "; break;
-                case "ve9":
-                    return " 13h00, le vendredi de la semaine "; break;
-                case "ve10":
-                     return " 13h30, le vendredi de la semaine "; break;
-                case "ve11":
-                     return " 14h00, le vendredi de la semaine "; break;
-                case "ve12":
-                    return " 14h30, le vendredi de la semaine "; break;
-                case "ve13":
-                     return " 15h00, le vendredi de la semaine "; break;
-                case "ve14":
-                     return " 15h30, le vendredi de la semaine "; break;
-                 case "ve15":
-                     return " 16h00, le vendredi de la semaine "; break;
-                 case "ve16":
-                     return " 16h30, le vendredi de la semaine "; break;
-                 case "ve17":
-                     return " 17h00, le vendredi de la semaine "; break;
-                 case "ve18":
-                     return " 17h30, le vendredi de la semaine "; break;
-                 case "ve19":
-                     return " 18h00, le vendredi de la semaine "; break;
-                 case "ve20":
-                     return " 18h30, le vendredi de la semaine "; break;
-                case "sa1":
-                    return " 9h00, le samedi de la semaine "; break;
-                case "sa2":
-                    return " 9h30, le samedi de la semaine "; break;
-                case "sa3":
-                    return " 10h00, le samedi de la semaine "; break;
-                case "sa4":
-                    return " 10h30, le samedi de la semaine "; break;
-                case "sa5":
-                     return " 11h00, le samedi de la semaine "; break;
-                case "sa6":
-                     return " 11h30, le samedi de la semaine "; break;
-                case "sa7":
-                     return " 12h00, le samedi de la semaine "; break;
-                case "sa8":
-                     return " 12h30, le samedi de la semaine "; break;
-                case "sa9":
-                    return " 13h00, le samedi de la semaine "; break;
-                case "sa10":
-                     return " 13h30, le samedi de la semaine "; break;
-                case "sa11":
-                     return " 14h00, le samedi de la semaine "; break;
-                case "sa12":
-                    return " 14h30, le samedi de la semaine "; break;
-                case "sa13":
-                     return " 15h00, le samedi de la semaine "; break;
-                case "sa14":
-                     return " 15h30, le samedi de la semaine "; break;
-                 case "sa15":
-                     return " 16h00, le samedi de la semaine "; break;
-                 case "sa16":
-                     return " 16h30, le samedi de la semaine "; break;
-                 case "sa17":
-                     return " 17h00, le samedi de la semaine "; break;
-                 case "sa18":
-                     return " 17h30, le samedi de la semaine "; break;
-                 case "sa19":
-                     return " 18h00, le samedi de la semaine "; break;
-                 case "sa20":
-                     return " 18h30, le samedi de la semaine "; break;
-                default : return "error";
-        }
-    }
-
-
-    /**
-    * @Route("/ajax_add_rdv", name="add_rdv")
-    */
-    public function addRdv(Request $request,ObjectManager $manager): Response{
-        if($request->request->get('student') == NULL){
-            return $this->redirectToRoute('site');
-
-        }
-        //ON AJOUTE UN RDV
-        $student = $request->request->get('student');
-        $teacher = $request->request->get('teacher');
-        $week = $request->request->get('week');
-        $begin_rdv = $request->request->get('begin_rdv');
-        //ON AJOUTE UN RDV A LA TABLE
-        $rdv = new RDV();
-        $rdv->setStudent($student);
-        $rdv->setTeacher($teacher);
-        $rdv->setWeek($week);
-        $rdv->setBeginHour($begin_rdv);
-        $manager->persist($rdv);
-
-        //ON CREE LA NOTIFICATION
-        $notif = new Notification();
-        $notif->setUsername($teacher);
-        $notif->setMessage($student.' a pris un rendez-vous à ');
-
-        //Mettre la bonne heure:
-        $notif->setBeginHour($this->getBeginHourForNotification($begin_rdv));
-
-
-
-        $notif->setWeek($week);
-        $manager->persist($notif);
-
-        $manager->flush();
-
-        //ON SUPPRIME LA DISPONIBILITE DE L'ENSEIGNANT
-        $repo = $this->getDoctrine()->getRepository(Availability::class);
-        $availabilities = $repo->findBy(['Username' => $teacher, 'Week' => $week, 'Begin_hour' => $begin_rdv]);
-        for($i = 0 ; $i < count($availabilities); $i++){
-             $manager->remove($availabilities[$i]);
-        }
-
-        //ON SUPPRIME LA DISPONIBILITE DE L'ETUDIANT (S'IL EST EGALEMENT PROF)
-        $availabilitiesStudent = $repo->findBy(['Username' => $student, 'Week' => $week, 'Begin_hour' => $begin_rdv]);
-        for($i = 0 ; $i < count($availabilitiesStudent); $i++){
-             $manager->remove($availabilitiesStudent[$i]);
-        }
-        $manager->flush();
-
-        $response = new Response();
-         $response->setContent(json_encode([
-                'qual' => 'yoyoyo'
-
-             ]));
-         return $response;
-    }
-
-
-
-    /**
-    * @Route("/notifications", name="notifications")
-    */
-    public function showNotifications(){
-        $repo = $this->getDoctrine()->getRepository(Notification::class);
-        $notifications = $repo->findBy(['Username' => $this->get('security.token_storage')->getToken()->getUsername()]);
-
-        $array_notif = array();
-        foreach($notifications as $notif){
-            array_push($array_notif, [$notif->getMessage(),$notif->getBeginHour(), $notif->getWeek()]);
-        }
-
-
-        dump($array_notif);
-        return $this->render('site/notifications.html.twig',['notifications' => $notifications]);
-    }
 
 
     /**
@@ -863,6 +402,11 @@ class SiteController extends AbstractController
 
 
 
+
+
+
+
+
      /**
     * @Route("/ajax_get_number_of_notifications", name="ajax_get_number")
     */
@@ -879,6 +423,11 @@ class SiteController extends AbstractController
          ]));
          return $response;
     }
+
+
+
+
+
 
 
     /**
